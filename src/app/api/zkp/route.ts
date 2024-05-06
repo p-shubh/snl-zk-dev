@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { kv } from "@vercel/kv";
-import { LoginResponse, ZKPRequest } from "../../components/types/UsefulTypes";
+import { LoginResponse, ZKPRequest } from "../../../components/types/UsefulTypes";
 import axios from "axios";
 import jwt_decode from "jwt-decode";
 

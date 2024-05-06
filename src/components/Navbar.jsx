@@ -192,9 +192,29 @@ const Navbar = () => {
       checkIfAddressHasBalance(address);
     }
     if (status == "failure") {
-      createRuntimeError("Gift Coin transfer Failed. Error = " + res?.effects);
+      console.log("Gift Coin transfer Failed. Error = " + res?.effects);
     }
   }
+
+  async function getSalt(subject, jwtEncoded) {
+    const getSaltRequest = {
+        subject: subject,
+        jwt: jwtEncoded
+    }
+    console.log("Getting salt...");
+    console.log("Subject = ", subject);
+    console.log("jwt = ", jwtEncoded);
+    const response = await axios.post('/api/salt', getSaltRequest);
+    console.log("getSalt response = ", response);
+    if (response?.data.status == 200) {
+        const userSalt = response.data.salt;
+        console.log("Salt fetched! Salt = ", userSalt);
+        return userSalt;
+    } else {
+        console.log("Error Getting SALT");
+        return null;
+    }
+}
 
   async function loadRequiredData(encodedJwt) {
     //Decoding JWT to get useful Info
@@ -202,12 +222,17 @@ const Navbar = () => {
       encodedJwt
     ));
 
+  //   const getSaltRequest = {
+  //     subject: subject,
+  //     jwt: jwtEncoded
+  // }
+
     setSubjectID(decodedJwt.sub);
     //Getting Salt
-    // const userSalt = await getSalt(decodedJwt.sub, encodedJwt);
-    const response = await axios.post("/api/salt");
+    const userSalt = await getSalt(decodedJwt.sub, encodedJwt);
+    // const response = await axios.post("/api/salt", getSaltRequest);
 
-    const userSalt = response.data.salt;
+    // const userSalt = response.data.salt;
     if (!userSalt) {
       createRuntimeError("Error getting userSalt");
       return;
