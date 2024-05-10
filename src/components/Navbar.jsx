@@ -22,7 +22,7 @@ import { TransactionBlock } from "@mysten/sui.js/transactions";
 const REACT_APP_GATEWAY_URL = "https://gateway.netsepio.com/";
 
 const Navbar = () => {
-  const wallet = Cookies.get("bingo_wallet");
+  const wallet = Cookies.get("snl_wallet");
 
   const [hovered, setHovered] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -61,7 +61,7 @@ const Navbar = () => {
   }, []);
 
   const handleDeleteCookie = () => {
-    Cookies.remove("bingo_wallet");
+    Cookies.remove("snl_wallet");
     window.location.href = "/";
   };
 
@@ -283,10 +283,10 @@ const Navbar = () => {
   return (
     <div>
 {userAddress && (
-<div className="flex border border-gray-300 px-2 py-2 group rounded-lg transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+<div className="flex border border-gray-300 px-1 py-1 rounded-lg" style={{backgroundColor: '#BFCFE7'}}>
             <div className='flex gap-2'>
               {avatarUrl && <img src={avatarUrl} alt="Avatar" style={{width: 40}}/>}
-              <dd className='text-sm leading-6 text-gray-700 sm:col-span-2 text-white'>
+              <dd className='text-xs leading-6 text-gray-700 sm:col-span-2 text-black'>
                 <div>{userAddress?.slice(0, 3)}...{userAddress?.slice(-3)}</div>
                 <div className="flex justify-center">
                   <button
@@ -303,7 +303,7 @@ const Navbar = () => {
             </div>
 
             <div className=''>
-              <dd className='mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 text-white'>
+              <dd className='mt-1 text-xs leading-6 text-gray-700 sm:col-span-2 sm:mt-0 text-black'>
                 <div className="justify-end flex">{userBalance.toFixed(4)} SUI</div>
                 <div>
                   <button

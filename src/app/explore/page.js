@@ -13,11 +13,11 @@ export default function Dashboard() {
   const [pagestatus, setpagestatus] = useState('snl');
   const [loading, setLoading] = useState(false);
   const [games, setGames] = useState([]);
-  const [bgImage, setBgImage] = useState('/bingo1.png');
+  const [bgImage, setBgImage] = useState('/snake1.png');
 
   useEffect(() => {
     const call = () => {
-      const loggedin = Cookies.get('bingo_wallet');
+      const loggedin = Cookies.get('snl_wallet');
       settoken(loggedin);
     };
     call();
@@ -115,8 +115,61 @@ export default function Dashboard() {
   
 
   return (
+    <>
+    <div className="z-10 w-full flex">
+      <div className="z-10 w-full items-center justify-between font-mono text-sm lg:flex px-60 py-1" style={{backgroundColor:'#C5FFF8'}}>
+        <Link
+          href="/"
+          className="gap-2 fixed left-0 top-0 flex w-full justify-center font-bold backdrop-blur-2xl dark:from-inherit lg:static lg:w-auto lg:p-2"
+        >
+          <img
+            src="/bingo_lion2.png"
+            style={{ width: 40 }}
+            className="rounded-lg"
+          />
+          <div className="py-2 text-xl">SNL</div>
+        </Link>
+        <div className="fixed gap-4 bottom-0 left-0 flex w-full items-end justify-center lg:static lg:w-auto">
+          {token ? (
+            <div className="flex gap-4">
+              <Link
+                href="/explore"
+                className="pointer-events-none flex place-items-center gap-2 lg:pointer-events-auto mb-4"
+              >
+                <div className="text-lg">Explore</div>
+              </Link>
+              <Link
+                href="/launch"
+                className="pointer-events-none flex place-items-center gap-2 lg:pointer-events-auto mb-4"
+              >
+                <div className="text-lg">Launch</div>
+              </Link>
+            </div>
+          ) : (
+            <div className="flex gap-4">
+              <Link
+                href="/explore"
+                className="pointer-events-none flex place-items-center gap-2 p-1 lg:pointer-events-auto"
+              >
+                <div className="text-lg">Explore</div>
+              </Link>
+              <Link
+                href="/launch"
+                className="pointer-events-none flex place-items-center gap-2 p-1 lg:pointer-events-auto"
+              >
+                <div className="text-lg">Launch</div>
+              </Link>
+            </div>
+          )}
+          <div className="text-center group rounded-lg transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+            <Navbar />
+          </div>
+        </div>
+      </div>
+      </div>
+      
     <main
-      className="flex flex-col items-center justify-between p-24"
+      className="flex flex-col items-center justify-between p-20"
       style={{ backgroundImage: `url("${bgImage}")`, backgroundSize: 'cover' }}
     >
       {/* Background div with blur */}
@@ -133,67 +186,8 @@ export default function Dashboard() {
           zIndex: 0, // Ensure the blur layer is below the content
         }}
       />
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <Link
-          href="/"
-          className="gap-2 fixed left-0 top-0 flex w-full justify-center font-bold border-b border-gray-300 bg-gradient-to-b from-zinc-200 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:p-2 lg:dark:bg-zinc-800/30"
-        >
-          <img
-            src="/bingo_lion2.png"
-            style={{ width: 40 }}
-            className="rounded-lg"
-          />
-          <div className="py-2 text-white">SNL</div>
-        </Link>
-        <div className="text-white fixed gap-4 bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          {token ? (
-          <div className="flex gap-4">
-            <Link href="/explore"
-            className="pointer-events-none flex place-items-center gap-2 lg:pointer-events-auto mb-4"
-          >
-            <div className="text-lg">Explore</div>
-          </Link>
-          <Link href="/launch"
-            className="pointer-events-none flex place-items-center gap-2 lg:pointer-events-auto mb-4"
-          >
-            <div className="text-lg">Launch</div>
-          </Link>
-          {/* <Link href="/dashboard"
-            className="pointer-events-none flex place-items-center gap-2 lg:pointer-events-auto mb-4"
-          >
-            <div className="text-lg">Dashboard</div>
-          </Link> */}
-          </div>):(
-            <div className="flex gap-4">
-              <Link href="/explore"
-            className="pointer-events-none flex place-items-center gap-2 p-1 lg:pointer-events-auto"
-          >
-            <div className="text-lg">Explore</div>
-          </Link>
-          <Link href="/launch"
-            className="pointer-events-none flex place-items-center gap-2 p-1 lg:pointer-events-auto"
-          >
-            <div className="text-lg">Launch</div>
-          </Link>
-            {/* <Link href="/dashboard"
-            className="pointer-events-none flex place-items-center gap-2 p-1 lg:pointer-events-auto"
-          >
-            <div className="text-lg">Dashboard</div>
-          </Link> */}
-          </div>
-          )}
-          <div className="text-center group rounded-lg transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          >
-        <Navbar />
-        </div>
-        </div>
-      </div>
-
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(3, minmax(0, 1fr))',
-            gap: '1rem',
-          }}>
+          <div 
+          className='flex flex-wrap gap-10 justify-center'>
           {loading ? (
             <p>Loading...</p>
           ) : (
@@ -224,5 +218,6 @@ export default function Dashboard() {
       )}
 
     </main>
+    </>
   );
 }

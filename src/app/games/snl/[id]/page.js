@@ -17,7 +17,7 @@ export default function Bingo({ params }) {
 
   useEffect(() => {
     const call = () => {
-      const loggedin = Cookies.get("bingo_wallet");
+      const loggedin = Cookies.get("snl_wallet");
       settoken(loggedin);
     };
     call();

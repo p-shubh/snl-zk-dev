@@ -14,7 +14,7 @@ export default function Home() {
 
   useEffect(() => {
     const call = () => {
-      const loggedin = Cookies.get('bingo_wallet');
+      const loggedin = Cookies.get('snl_wallet');
       setwallet(loggedin);
     };
     call();
@@ -42,24 +42,19 @@ export default function Home() {
   }, [prevScrollY]);
 
   return (
-    <main
-      className="flex min-h-screen flex-col items-center justify-between p-24"
-      style={{
-        backgroundImage:
-          'radial-gradient(circle at bottom left, #040819 10%, #0162FF 40% , #1D73FF, #5696FF, #8EB9FF, #AACBFF)',
-      }}
-    >
+    <>
+    <div style={{backgroundColor:'#C5FFF8'}} className="w-full items-center justify-center flex py-1">
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
         <Link
           href="/"
-          className="gap-2 fixed left-0 top-0 flex w-full justify-center font-bold border-b border-gray-300 bg-gradient-to-b from-zinc-200 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:p-2 lg:dark:bg-zinc-800/30"
+          className="gap-2 fixed left-0 top-0 flex w-full justify-center font-bold backdrop-blur-2xl dark:from-inherit lg:static lg:w-auto lg:p-2"
         >
           <img
             src="/bingo_lion2.png"
             style={{ width: 40 }}
             className="rounded-lg"
           />
-          <div className="py-2">SNL</div>
+          <div className="py-2 text-xl">SNL</div>
         </Link>
         <div className="fixed gap-4 bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           {wallet ? (
@@ -110,34 +105,18 @@ export default function Home() {
           </div>
         </div>
       </div>
+      </div>
 
-      <div className="flex justify-between gap-20 my-20">
-        {/* <div
-          style={{ transform: 'rotate(-15deg)' }}
-          onMouseEnter={() => setIsHovered2(true)}
-          onMouseLeave={() => setIsHovered2(false)}
-          className={`pb-2 border border-gray-500 rounded-3xl transition-transform duration-300 ${
-            isHovered2
-              ? 'transform scale-125 shadow-2xl'
-              : 'transform scale-110 shadow-lg'
-          }`}
-        >
-          <Link href="/explore">
-            <Image
-              src="/bingo2.png"
-              width={300}
-              height={300}
-              className="rounded-t-3xl"
-            />
-            <div className="text-center text-white mx-auto text-xl py-4">
-              BINGO
-            </div>
-            <div className="text-center text-white text-xs">
-              A number calling game styled as a slow casino. <br></br>Now play
-              bingo on the blockchain.
-            </div>
-          </Link>
-        </div> */}
+    <main
+      className="flex min-h-screen flex-col items-center justify-between p-20"
+      style={{
+        backgroundImage:
+          'radial-gradient(circle at bottom left, #040819 10%, #0162FF 40% , #1D73FF, #5696FF, #8EB9FF, #AACBFF)',
+      }}
+    >
+      
+
+      <div className="flex justify-between gap-20 my-10">
         <div className='my-auto'>
           <div className="text-6xl text-white font-bold mb-10 text-center">
           SNL
@@ -147,22 +126,11 @@ export default function Home() {
             Ladder game reimagined for modern learning, with dynamic <br></br>
             content integration for an engaging educational journey.
           </div>
-          {/* {wallet ? (
-          <></>
-        ) : (
-          <div className="mx-auto text-center group rounded-lg border border-transparent flex justify-center mt-10 w-1/2 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-        <Navbar />
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-        </div>
-        )} */}
         </div>
         <div
-          // style={{ transform: 'rotate(15deg)' }}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`pb-2 border border-gray-500 rounded-3xl transition-transform duration-300 ${
+          className={`pb-8 border border-gray-500 rounded-3xl transition-transform duration-300 ${
             isHovered
               ? 'transform scale-125 shadow-2xl'
               : 'transform scale-110 shadow-lg'
@@ -239,5 +207,6 @@ export default function Home() {
         
       </div>
     </main>
+    </>
   );
 }

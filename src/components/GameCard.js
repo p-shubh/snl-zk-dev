@@ -44,56 +44,71 @@ const GameCard = ({ game }) => {
   }
 
   return (
-    <Link href={`/games/snl/${game?.gameId}`} className='z-10'>
-    <div className="border text-black rounded-2xl mt-10 bg-white">
-      <div className="w-full">
-                    <img
-                      alt="alt"
-                      src={`${
-                        "https://nftstorage.link/ipfs"
-                      }/${removePrefix(game?.coverImage)}`}
-                      className="rounded-t-2xl"
-                      style={{ height: "200px", width: "400px" }}
-                    />
-                </div>
-      <div className="p-4">
-        <div>
-        <img
-          alt="alt"
-          src={`${'https://nftstorage.link/ipfs'}/${removePrefix(
-            game?.picture
-          )}`}
-          className="rounded-full border border-black"
-          width="100"
-          height="100"
-        />
-        </div>
-      
-      <div className="mt-4 font-bold">
-        <div className="flex justify-between">
-        <h5>{game?.name} ({game?.symbol})</h5>
-        <div className="bg-green-500 rounded-lg px-4 py-2">Enter game</div>
-        </div>
-        <p className="mt-2">{game?.description}</p>
-        <div className='mt-2'>
-          {timeLeft.total > 0 ? (
-            <p className=''>
-              Time until game starts: <br></br>
-              <div className='text-red-500'>
-              {timeLeft.days} days, {timeLeft.hours} hrs, {timeLeft.minutes}{' '}
-              mins, {timeLeft.seconds} sec
-                </div>
-            </p>
-          ) : (
-            <div className="p-2 text-green-500">
-                  {/* Ongoing game. */}
-            </div>
+    <Link href={`/games/snl/${game?.gameId}`} className="z-10">
+      <div className="border text-black rounded-2xl mt-10 bg-white">
+        <div className="w-full">
+          {game?.picture ? (<img
+            alt="alt"
+            src={`${'https://nftstorage.link/ipfs'}/${removePrefix(
+              game?.coverImage
+            )}`}
+            className="rounded-t-2xl"
+            style={{ height: '200px', width: '400px' }}
+          />) :(
+            <img
+            alt="alt"
+            src="https://images.unsplash.com/photo-1642056448324-922ff603e0c4?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8c25ha2VzJTIwYW5kJTIwbGFkZGVyc3xlbnwwfHwwfHx8MA%3D%3D"
+            className="rounded-t-2xl"
+            style={{ height: '200px', width: '400px' }}
+          />
           )}
         </div>
-       
+        <div>
+        <div className="flex justify-between">
+          <div className="pl-4 -mt-12">
+            { game?.picture ? (<img
+              alt="alt"
+              src={`${'https://nftstorage.link/ipfs'}/${removePrefix(
+                game?.picture
+              )}`}
+              className="rounded-full border border-black"
+              width="100"
+              height="100"
+            />):
+            (<img
+              alt="alt"
+              src="https://media.istockphoto.com/id/531466314/vector/snakes-and-ladders.jpg?s=612x612&w=0&k=20&c=YYRwkxtVxAXrYV7kFCHKW4h0SHFS4sSSoaj-s9OeHF4="
+              className="rounded-full border border-black"
+              width="100"
+              height="100"
+            />)}
+          </div>
+          <div className="bg-green-500 rounded-lg px-4 py-2 m-2">Enter game</div>
+          </div>
+
+          <div className="m-4">
+            <div className="flex justify-between font-bold">
+              <h5>
+                {game?.name} ({game?.symbol})
+              </h5>
+            </div>
+            <p className="mt-2">{game?.description}</p>
+            <div className="mt-2">
+              {timeLeft.total > 0 ? (
+                <p className="">
+                  Time until game starts: <br></br>
+                  <div className="text-red-500">
+                    {timeLeft.days} days, {timeLeft.hours} hrs,{' '}
+                    {timeLeft.minutes} mins, {timeLeft.seconds} sec
+                  </div>
+                </p>
+              ) : (
+                <div className="p-2 text-green-500">{/* Ongoing game. */}</div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-    </div>
     </Link>
   );
 };
