@@ -360,7 +360,7 @@ export default function Dashboard() {
       </div>
 
     <main
-      className="flex flex-col items-center justify-between p-20"
+      className="flex flex-col items-center justify-between lg:p-20 md:p-20 py-14"
       style={{ backgroundImage: `url("${bgImage}")`, backgroundSize: 'cover' }}
     >
       {/* Background div with blur */}
@@ -379,7 +379,7 @@ export default function Dashboard() {
       />
 
       {pagestatus === 'create' && (
-        <div className="w-full z-10 px-60">
+        <div className="w-full z-10 lg:px-60">
           <div
             className="px-10 py-10 bg-black rounded-2xl mt-0"
             style={{
@@ -388,8 +388,8 @@ export default function Dashboard() {
             }}
           >
             <div>
-              <div className="flex justify-between">
-                <div className="w-1/2 mt-10">
+              <div className="lg:flex md:flex justify-between">
+                <div className="lg:w-1/2 md:w-1/2 mt-10">
               <input
                 type="text"
                 placeholder="Game name"

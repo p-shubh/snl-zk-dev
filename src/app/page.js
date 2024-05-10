@@ -116,7 +116,7 @@ export default function Home() {
     >
       
 
-      <div className="flex justify-between gap-20 my-10">
+      <div className="lg:flex md:flex justify-between gap-20 my-10">
         <div className='my-auto'>
           <div className="text-6xl text-white font-bold mb-10 text-center">
           SNL
@@ -130,7 +130,7 @@ export default function Home() {
         <div
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
-          className={`pb-8 border border-gray-500 rounded-3xl transition-transform duration-300 ${
+          className={`pb-8 border border-gray-500 rounded-3xl transition-transform duration-300 mt-20 lg:mt-0 md:mt-0 ${
             isHovered
               ? 'transform scale-125 shadow-2xl'
               : 'transform scale-110 shadow-lg'
@@ -141,7 +141,7 @@ export default function Home() {
               src="/snake1.png"
               width={300}
               height={300}
-              className="rounded-t-3xl"
+              className="rounded-t-3xl w-full"
             />
             <div className="text-center text-white mx-auto text-xl py-4">
               SNAKE N LADDER
@@ -156,17 +156,17 @@ export default function Home() {
 
       <div className="flex flex-col items-center justify-center min-h-screen text-white mt-40 max-w-5xl">
         <Zoom when={scrollDirection === 'down'}>
-          <h1 className="text-5xl font-bold mb-8">
+          <h1 className="lg:text-5xl font-bold mb-8 text-2xl">
             Unleash Your Competitive Spirit
           </h1>
-          <div className="text-2xl font-bold mb-8">
+          <div className="lg:text-2xl font-bold mb-8 text-lg">
             Launch and Play Board Games with Ease!
           </div>
           </Zoom>
 
-          <div id="features" className="mt-16 flex gap-10">
+          <div id="features" className="mt-16 lg:flex md:flex gap-10">
           {/* Your feature sections here */}
-          <div className="w-1/2 text-lg">
+          <div className="lg:w-1/2 md:w-1/2 text-lg">
             <div className="rounded-2xl px-4 py-4 text-black" 
             style={{
         backgroundImage:
@@ -196,7 +196,7 @@ export default function Home() {
             </div>
           </div>
           <Zoom when={scrollDirection === 'down'}>
-          <div className="w-1/2 rounded-2xl px-60 py-60" 
+          <div className="w-1/2 rounded-2xl px-60 py-60 lg:mt-0 md:mt-0 mt-10" 
           style={{backgroundImage: "url('/diceroll.gif')", backgroundRepeat:'no-repeat', backgroundSize:'cover', backgroundPosition:'center'}}
           >
           </div>
