@@ -49,7 +49,7 @@ export default function Bingo({ params }) {
       <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
       <Link href="/" className="gap-2 fixed left-0 top-0 flex w-full justify-center font-bold border-b border-gray-300 bg-gradient-to-b from-zinc-200 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:p-2 lg:dark:bg-zinc-800/30">
           <img src="/bingo_lion2.png" style={{width: 40}} className="rounded-lg"/>
-          <div className="py-2">VirtueGaming</div>
+          <div className="py-2">SNL</div>
         </Link>
         <div className="text-white fixed gap-4 bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           {token ? (
@@ -88,7 +88,7 @@ export default function Bingo({ params }) {
           </Link> */}
           </div>
           )}
-          <div className="text-center group rounded-lg border border-gray-300 px-2 py-2 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+          <div className="text-center group rounded-lg transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
           >
         <Navbar />
         </div>
@@ -109,7 +109,7 @@ export default function Bingo({ params }) {
             <div className="relative rounded-lg shadow">
               <div className="flex justify-center gap-4">
                 <img
-                  src="/loadervirtue.gif"
+                  src="/dice_loader.gif"
                   alt="Loading icon"
                 />
               </div>

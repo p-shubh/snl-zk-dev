@@ -282,9 +282,8 @@ const Navbar = () => {
 
   return (
     <div>
-
-<div className="flex">
-{userAddress ? (
+{userAddress && (
+<div className="flex border border-gray-300 px-2 py-2 group rounded-lg transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
             <div className='flex gap-2'>
               {avatarUrl && <img src={avatarUrl} alt="Avatar" style={{width: 40}}/>}
               <dd className='text-sm leading-6 text-gray-700 sm:col-span-2 text-white'>
@@ -302,8 +301,7 @@ const Navbar = () => {
                 </div>
               </dd>
             </div>
-          ) : null}
-          {userAddress ? (
+
             <div className=''>
               <dd className='mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0 text-white'>
                 <div className="justify-end flex">{userBalance.toFixed(4)} SUI</div>
@@ -319,9 +317,8 @@ const Navbar = () => {
                 </div>
               </dd>
             </div>
-          ) : null}
-
 </div>
+          )}
 
       {userAddress ? (
           <></>

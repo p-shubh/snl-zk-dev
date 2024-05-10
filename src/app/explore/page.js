@@ -143,7 +143,7 @@ export default function Dashboard() {
             style={{ width: 40 }}
             className="rounded-lg"
           />
-          <div className="py-2">VirtueGaming</div>
+          <div className="py-2 text-white">SNL</div>
         </Link>
         <div className="text-white fixed gap-4 bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           {token ? (
@@ -182,7 +182,7 @@ export default function Dashboard() {
           </Link> */}
           </div>
           )}
-          <div className="text-center group rounded-lg border border-gray-300 px-2 py-2 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+          <div className="text-center group rounded-lg transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
           >
         <Navbar />
         </div>
@@ -214,7 +214,7 @@ export default function Dashboard() {
             <div className="relative rounded-lg shadow">
               <div className="flex justify-center gap-4">
                 <img
-                  src="/loadervirtue.gif"
+                  src="/dice_loader.gif"
                   alt="Loading icon"
                 />
               </div>

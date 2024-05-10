@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
       <html lang="en">
         <Head>
-          <title>VirtueGaming</title>
+          <title>SNL</title>
           <meta
             name="description"
             content="An app where users are able to discover something new and receive an NFT to show off their achievement."
