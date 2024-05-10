@@ -379,7 +379,7 @@ export default function Dashboard() {
       />
 
       {pagestatus === 'create' && (
-        <div className="w-1/2 z-10">
+        <div className="w-full z-10 px-60">
           <div
             className="px-10 py-10 bg-black rounded-2xl mt-0"
             style={{
@@ -559,6 +559,8 @@ style={{border: "1px solid #75E2FF", color:'black'}}
               {
                 type === 'snl' && (
                   <div>
+                    <div className="flex gap-10">
+                    <div>
                     <h2 className="text-white pt-2 pb-2">Total number of Snakes</h2>
 
 <input
@@ -567,7 +569,8 @@ placeholder="Snakes count"
 className="mb-8 shadow border appearance-none rounded-xl w-full py-4 px-6 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
 style={{border: "1px solid #75E2FF", color:'black'}}
 />
-
+</div>
+<div>
 <h2 className="text-white pt-2 pb-2">Total number of Ladders</h2>
 
 <input
@@ -576,6 +579,8 @@ placeholder="Ladders count"
 className="mb-8 shadow border appearance-none rounded-xl w-full py-4 px-6 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
 style={{border: "1px solid #75E2FF", color:'black'}}
 />
+</div>
+</div>
 
                   <div className='text-white flex justify-between mt-4 mb-8'>
                     Upload JSON File for trivia and questions
