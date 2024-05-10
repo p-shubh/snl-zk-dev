@@ -6,9 +6,6 @@ import Button from './Button';
 import { IoIosEye } from 'react-icons/io';
 import profile from '../../public/profile.jpg';
 import Image from 'next/image';
-import { ethers } from 'ethers';
-import Lottie from 'lottie-react';
-import snake from '@/components/snake.json';
 import { Network, Alchemy } from 'alchemy-sdk';
 import Cookies from "js-cookie";
 import CongratulationsModal from './CongratulationsModal';
@@ -76,6 +73,11 @@ const GameBoard = () => {
       const ladderEndPoints = [12, 16, 22, 30, 52, 44, 47, 69, 63];
       const snakeStartPoints = [10, 27, 24, 31, 43, 40, 58, 70, 65];
       const snakeEndPoints = [1, 9, 15, 23, 26, 30, 39, 51, 55];
+
+      // const ladderStartPoints = [7, 10, 30, 31, 36, 47, 54 ];
+      // const ladderEndPoints =   [14, 19, 50, 51, 42, 67, 62];
+      // const snakeStartPoints =  [21, 26, 28, 37, 41, 55, 68];
+      // const snakeEndPoints =    [13, 9,  20, 28, 25, 46, 48];
 
       const nextPosition = dieNumber + playerPosition;
       let eventEncountered = '';
@@ -193,7 +195,7 @@ const GameBoard = () => {
   };
   return (
     <>
-      <div className="flex justify-center items-stretch ">
+      <div className="flex justify-center items-stretch">
         <div className="border-2 bg-board bg-cover lg:bg-boardlg border-[#65E4E0] overflow-hidden">
           <div className="grid grid-cols-9 grid-rows-8">
             {gameContent
@@ -223,7 +225,7 @@ const GameBoard = () => {
                   <div className="text-[15px] p-0 m-0 font-medium flex items-center justify-between text-white">
                     {id}
                     <IoIosEye
-                      className="hover:text-primary active:text-primary text-green-500"
+                      className="hover:text-primary active:text-primary" style={{color:'#C3FF93'}}
                       onClick={() => {
                         setSelectedCell(
                           selectedCell === null || selectedCell.term !== term
@@ -254,7 +256,7 @@ const GameBoard = () => {
       </div>
 
       <div className="w-fulll flex justify-center">
-        <div className="flex px-[40] lg:px-[30px] bg-grad h-[7.5rem] lg:h-[5.625rem] mb-4 w-[37.5rem] lg:w-[28.125rem] justify-center mt-8 lg:mt-6 gap-6 rounded-[60px] lg:rounded-[45px]">
+        <div className="flex px-[40] lg:px-[30px] bg-grad h-[7.5rem] lg:h-[5.625rem] mb-4 w-[37.5rem] lg:w-[28.125rem] justify-center mt-8 lg:mt-6 gap-6 rounded-[20px]">
           <div className="flex w-full items-center justify-between">
             <div>
               <Button
@@ -282,7 +284,7 @@ const GameBoard = () => {
             </div>
             <div className="flex flex-col justify-center relative font-medium -top-4 lg:-top-3 gap-y-1 items-center">
               Position
-              <div className="w-[48px] h-[28px] lg:h-[21px] text-[#A8A8A8] text-[1rem] flex items-center justify-center lg:text-[14px] lg:w-[36px] rounded-[5px] bg-[#353535CC]">
+              <div className="w-[48px] h-[28px] lg:h-[21px] text-white text-[1rem] flex items-center justify-center lg:text-[14px] lg:w-[36px] rounded-[5px] bg-[#353535CC]">
                 {playerPosition}
               </div>
             </div>
