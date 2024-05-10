@@ -10,6 +10,8 @@ import { NFTStorage } from "nft.storage";
 const client = new NFTStorage({ token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDFFODE2RTA3RjBFYTg4MkI3Q0I0MDQ2QTg4NENDQ0Q0MjA4NEU3QTgiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY3MzI0NTEzNDc3MywibmFtZSI6Im5mdCJ9.vP9_nN3dQHIkN9cVQH5KvCLNHRk3M2ZO4x2G99smofw" });
 import 'react-datepicker/dist/react-datepicker.css';
 
+import { createClient } from "@supabase/supabase-js";
+
 export default function Dashboard() {
   const [token, settoken] = useState('');
   const [pagestatus, setpagestatus] = useState('create');
@@ -33,7 +35,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     const call = () => {
-      const loggedin = Cookies.get('bingo_wallet');
+      const loggedin = Cookies.get('snl_wallet');
       settoken(loggedin);
     };
     call();
@@ -97,10 +99,30 @@ export default function Dashboard() {
   }
 
   const creategame = async () => {
-    const wallet = Cookies.get('bingo_wallet');
+    const wallet = Cookies.get('snl_wallet');
     setLoading(true);
 
     try {
+
+      const projectlink = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const anonkey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+      const supabase = createClient(projectlink, anonkey);
+
+
+      const data = [{ contract_address: "testing" }];
+
+      const { data: insertedData, error } = await supabase.from('snl_sui').insert(data).select();
+
+      const { data: selectdata } = await supabase.from("snl_sui").select();
+
+      // const response = await fetch('/api/insertData', {
+      //   method: 'POST'
+      // });
+      // const data = await response.json();
+
+      console.log("inseted data", insertedData, selectdata);
+
       // const mintTransaction = {
       //   arguments: [gamename, dateAsU64.toString()],
       //   function:
@@ -193,14 +215,14 @@ export default function Dashboard() {
         );
       }
 
-      // console.log('created game:', response);
+      console.log("response game post", response);
+
       setcreategamedone(true);
       
       // Redirect to a different page after 3 seconds
-      setTimeout(() => {
-        // Replace '/target-page' with the path of the page you want to redirect to
-        window.location.replace('/explore');
-      }, 2000);
+      // setTimeout(() => {
+      //   window.location.replace('/explore');
+      // }, 2000);
     } catch (error) {
       console.error('Error handling', error);
     } finally {
@@ -284,8 +306,61 @@ export default function Dashboard() {
   }
 
   return (
+    <>
+    <div className="z-10 w-full flex">
+      <div className="z-10 w-full items-center justify-between font-mono text-sm lg:flex px-60 py-1" style={{backgroundColor:'#C5FFF8'}}>
+        <Link
+          href="/"
+          className="gap-2 fixed left-0 top-0 flex w-full justify-center font-bold backdrop-blur-2xl dark:from-inherit lg:static lg:w-auto lg:p-2"
+        >
+          <img
+            src="/bingo_lion2.png"
+            style={{ width: 40 }}
+            className="rounded-lg"
+          />
+          <div className="py-2 text-xl">SNL</div>
+        </Link>
+        <div className="fixed gap-4 bottom-0 left-0 flex w-full items-end justify-center lg:static lg:w-auto">
+          {token ? (
+            <div className="flex gap-4">
+              <Link
+                href="/explore"
+                className="pointer-events-none flex place-items-center gap-2 lg:pointer-events-auto mb-4"
+              >
+                <div className="text-lg">Explore</div>
+              </Link>
+              <Link
+                href="/launch"
+                className="pointer-events-none flex place-items-center gap-2 lg:pointer-events-auto mb-4"
+              >
+                <div className="text-lg">Launch</div>
+              </Link>
+            </div>
+          ) : (
+            <div className="flex gap-4">
+              <Link
+                href="/explore"
+                className="pointer-events-none flex place-items-center gap-2 p-1 lg:pointer-events-auto"
+              >
+                <div className="text-lg">Explore</div>
+              </Link>
+              <Link
+                href="/launch"
+                className="pointer-events-none flex place-items-center gap-2 p-1 lg:pointer-events-auto"
+              >
+                <div className="text-lg">Launch</div>
+              </Link>
+            </div>
+          )}
+          <div className="text-center group rounded-lg transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
+            <Navbar />
+          </div>
+        </div>
+      </div>
+      </div>
+
     <main
-      className="flex flex-col items-center justify-between p-24"
+      className="flex flex-col items-center justify-between p-20"
       style={{ backgroundImage: `url("${bgImage}")`, backgroundSize: 'cover' }}
     >
       {/* Background div with blur */}
@@ -302,70 +377,9 @@ export default function Dashboard() {
           zIndex: 0, // Ensure the blur layer is below the content
         }}
       />
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <Link
-          href="/"
-          className="gap-2 fixed left-0 top-0 flex w-full justify-center font-bold border-b border-gray-300 bg-gradient-to-b from-zinc-200 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:p-2 lg:dark:bg-zinc-800/30"
-        >
-          <img
-            src="/bingo_lion2.png"
-            style={{ width: 40 }}
-            className="rounded-lg"
-          />
-          <div className="py-2">VirtueGaming</div>
-        </Link>
-        <div className="text-white fixed gap-4 bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          {token ? (
-            <div className="flex gap-4">
-              <Link
-                href="/explore"
-                className="pointer-events-none flex place-items-center gap-2 lg:pointer-events-auto mb-4"
-              >
-                <div className="text-lg">Explore</div>
-              </Link>
-              <Link
-                href="/launch"
-                className="pointer-events-none flex place-items-center gap-2 lg:pointer-events-auto mb-4"
-              >
-                <div className="text-lg">Launch</div>
-              </Link>
-              {/* <Link
-                href="/dashboard"
-                className="pointer-events-none flex place-items-center gap-2 lg:pointer-events-auto mb-4"
-              >
-                <div className="text-lg">Dashboard</div>
-              </Link> */}
-            </div>
-          ) : (
-            <div className="flex gap-4">
-              <Link
-                href="/explore"
-                className="pointer-events-none flex place-items-center gap-2 p-1 lg:pointer-events-auto"
-              >
-                <div className="text-lg">Explore</div>
-              </Link>
-              <Link
-                href="/launch"
-                className="pointer-events-none flex place-items-center gap-2 p-1 lg:pointer-events-auto"
-              >
-                <div className="text-lg">Launch</div>
-              </Link>
-              {/* <Link
-                href="/dashboard"
-                className="pointer-events-none flex place-items-center gap-2 p-1 lg:pointer-events-auto"
-              >
-                <div className="text-lg">Dashboard</div>
-              </Link> */}
-            </div>
-          )}
-          <div className="text-center group rounded-lg border border-gray-300 px-2 py-2 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30">
-            <Navbar />
-          </div>
-        </div>
-      </div>
 
       {pagestatus === 'create' && (
-        <div className="w-1/2 z-10 mt-20">
+        <div className="w-1/2 z-10">
           <div
             className="px-10 py-10 bg-black rounded-2xl mt-0"
             style={{
@@ -724,11 +738,6 @@ style={{border: "1px solid #75E2FF", color:'black'}}
 
 
 {pagestatus === 'choose' && (
-        // <div
-        //   style={{ backgroundColor: '#222944E5' }}
-        //   className="flex overflow-y-auto overflow-x-hidden fixed inset-0 z-50 justify-center items-center w-full max-h-full"
-        //   id="popupmodal"
-        // >
           <div className="relative p-4 lg:w-1/2 w-full max-w-2xl max-h-full mt-20">
             <div className="relative rounded-lg shadow bg-black text-white">
               <div className="flex items-center justify-end p-4 md:p-5 rounded-t dark:border-gray-600"></div>
@@ -782,7 +791,7 @@ style={{border: "1px solid #75E2FF", color:'black'}}
             <div className="relative rounded-lg shadow">
               <div className="flex justify-center gap-4">
                 <img
-                  src="/loadervirtue.gif"
+                  src="/dice_loader.gif"
                   alt="Loading icon"
                 />
               </div>
@@ -792,5 +801,6 @@ style={{border: "1px solid #75E2FF", color:'black'}}
       )}
 
     </main>
+    </>
   );
 }
