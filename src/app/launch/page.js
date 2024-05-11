@@ -9,8 +9,8 @@ import { removePrefix } from "../../../modules/Utils/ipfsUtil";
 import { NFTStorage } from "nft.storage";
 const client = new NFTStorage({ token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJkaWQ6ZXRocjoweDFFODE2RTA3RjBFYTg4MkI3Q0I0MDQ2QTg4NENDQ0Q0MjA4NEU3QTgiLCJpc3MiOiJuZnQtc3RvcmFnZSIsImlhdCI6MTY3MzI0NTEzNDc3MywibmFtZSI6Im5mdCJ9.vP9_nN3dQHIkN9cVQH5KvCLNHRk3M2ZO4x2G99smofw" });
 import 'react-datepicker/dist/react-datepicker.css';
-
 import { createClient } from "@supabase/supabase-js";
+import { gameContent } from '@/lib/GameData';
 
 export default function Dashboard() {
   const [token, settoken] = useState('');
@@ -304,6 +304,34 @@ export default function Dashboard() {
       setLoading(false);
     }
   }
+
+  // --------------------------------------------------- gamedata user changes ------------------------------------------------------------
+
+  const [gameData, setGameData] = useState([...gameContent]);
+
+  // Function to handle changes in term or definition
+  const handleInputChange = (id, field, value) => {
+    setGameData(prevGameData =>
+      prevGameData.map(item =>
+        item.id === id ? { ...item, [field]: value } : item
+      )
+    );
+  };
+
+  const handleOptionChange = (id, index, value) => {
+    setGameData(prevGameData =>
+      prevGameData.map(item =>
+        item.id === id
+          ? {
+              ...item,
+              options: item.options.map((option, i) =>
+                i === index ? value : option
+              )
+            }
+          : item
+      )
+    );
+  };
 
   return (
     <>
@@ -709,6 +737,50 @@ style={{border: "1px solid #75E2FF", color:'black'}}
                   )}
                 </div>
               </div>
+
+<div className="w-full">
+              {gameData.map(item => (
+        <div key={item.id} className='mb-10'>
+          <div className="flex flex-col">
+          <input
+            type="text"
+            value={item.term}
+            onChange={e => handleInputChange(item.id, 'term', e.target.value)}
+          />
+          <textarea
+            value={item.definition}
+            onChange={e => handleInputChange(item.id, 'definition', e.target.value)}
+          ></textarea>
+          </div>
+          {item.question && (
+            <div>
+              <input
+                type="text"
+                value={item.question}
+                onChange={e => handleInputChange(item.id, 'question', e.target.value)}
+              />
+              <select
+                value={item.answer}
+                onChange={e => handleInputChange(item.id, 'answer', e.target.value)}
+              >
+                {item.options.map((option, index) => (
+                  <option key={index}>{option}</option>
+                ))}
+              </select>
+              {item.options.map((option, index) => (
+                <input
+                  key={index}
+                  type="text"
+                  value={option}
+                  onChange={e => handleOptionChange(item.id, index, e.target.value)}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      ))}
+
+</div>
 
               <button
                 onClick={creategame}
