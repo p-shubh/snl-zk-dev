@@ -44,10 +44,10 @@ export default function Home() {
   return (
     <>
     <div style={{backgroundColor:'#C5FFF8'}} className="w-full items-center justify-center flex py-1">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
+      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm flex">
         <Link
           href="/"
-          className="gap-2 fixed left-0 top-0 flex w-full justify-center font-bold backdrop-blur-2xl dark:from-inherit lg:static lg:w-auto lg:p-2"
+          className="gap-2 left-0 top-0 flex w-full justify-center font-bold backdrop-blur-2xl dark:from-inherit static w-auto p-2"
         >
           <img
             src="/bingo_lion2.png"
@@ -56,7 +56,7 @@ export default function Home() {
           />
           <div className="py-2 text-xl">SNL</div>
         </Link>
-        <div className="fixed gap-4 bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+        <div className="gap-4 top-0 right-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black static h-auto w-auto bg-none">
           {wallet ? (
             <div className="flex gap-4">
               <Link

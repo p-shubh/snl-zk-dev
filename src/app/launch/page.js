@@ -308,10 +308,10 @@ export default function Dashboard() {
   return (
     <>
     <div className="z-10 w-full flex">
-      <div className="z-10 w-full items-center justify-between font-mono text-sm lg:flex px-60 py-1" style={{backgroundColor:'#C5FFF8'}}>
+      <div className="z-10 w-full items-center justify-between font-mono text-sm flex lg:px-60 py-1" style={{backgroundColor:'#C5FFF8'}}>
         <Link
           href="/"
-          className="gap-2 fixed left-0 top-0 flex w-full justify-center font-bold backdrop-blur-2xl dark:from-inherit lg:static lg:w-auto lg:p-2"
+          className="gap-2 left-0 top-0 flex w-full justify-center font-bold backdrop-blur-2xl dark:from-inherit static w-auto p-2"
         >
           <img
             src="/bingo_lion2.png"
@@ -320,7 +320,7 @@ export default function Dashboard() {
           />
           <div className="py-2 text-xl">SNL</div>
         </Link>
-        <div className="fixed gap-4 bottom-0 left-0 flex w-full items-end justify-center lg:static lg:w-auto">
+        <div className="gap-4 top-0 right-0 flex w-full items-end justify-center static w-auto">
           {token ? (
             <div className="flex gap-4">
               <Link
