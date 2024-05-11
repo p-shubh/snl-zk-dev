@@ -195,6 +195,7 @@ const GameBoard = () => {
   };
   return (
     <>
+    <div className="flex">
       <div className="flex justify-center items-stretch">
         <div className="border-2 bg-board bg-cover lg:bg-boardlg border-[#65E4E0] overflow-hidden">
           <div className="grid grid-cols-9 grid-rows-8">
@@ -299,6 +300,7 @@ const GameBoard = () => {
             </div>
           </div>
         </div>
+      </div>
       </div>
 
       {selectedCell && (
