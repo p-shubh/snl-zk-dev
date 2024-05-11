@@ -204,7 +204,7 @@ const GameBoard = () => {
               .map(({ id, term, definition }) => (
                 <div
                   key={id}
-                  className="h-[6rem] w-[6rem] lg:w-[6rem] border p-[4px] lg:p-[3px] flex justify-between flex-col text-sm cursor-pointer hover:border-[#37F6AE]"
+                  className="h-[3.5rem] w-[7.5rem] lg:w-[5.625rem] border border-[#65E4E0] p-[4px] lg:p-[3px] flex justify-between flex-col text-sm cursor-pointer hover:border-[#37F6AE]"
                 >
                   <div className="text-xs whitespace-nowrap overflow-ellipsis overflow-hidden">
                     {term}
@@ -240,7 +240,7 @@ const GameBoard = () => {
           </div>
         </div>
 
-        <div className="flex justify-end flex-col w-10 text-3xl">
+        <div className="flex justify-end flex-col text-3xl">
           {playerPosition === 0 ? (
             <Image
               src={profile.src}
@@ -256,7 +256,7 @@ const GameBoard = () => {
       </div>
 
       <div className="w-fulll flex justify-center">
-        <div className="flex px-[40] lg:px-[30px] bg-grad h-[7.5rem] lg:h-[5.625rem] mb-4 w-[37.5rem] lg:w-[28.125rem] justify-center mt-8 lg:mt-6 gap-6 rounded-[20px]">
+        <div className="flex px-[40] lg:px-[30px] bg-grad h-[7.5rem] lg:h-[4.5rem] mb-0 w-[37.5rem] lg:w-[28.125rem] justify-center mt-8 lg:mt-8 gap-6 rounded-[20px]">
           <div className="flex w-full items-center justify-between">
             <div>
               <Button
@@ -282,7 +282,7 @@ const GameBoard = () => {
                 )}
               </Button>
             </div>
-            <div className="flex flex-col justify-center relative font-medium -top-4 lg:-top-3 gap-y-1 items-center">
+            <div className="flex flex-col justify-center relative font-medium -top-1 gap-y-1 items-center">
               Position
               <div className="w-[48px] h-[28px] lg:h-[21px] text-white text-[1rem] flex items-center justify-center lg:text-[14px] lg:w-[36px] rounded-[5px] bg-[#353535CC]">
                 {playerPosition}
