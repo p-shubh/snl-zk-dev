@@ -43,7 +43,7 @@ const GameBoard = () => {
 
   // setting api key for fetching
   const settings = {
-    apiKey: '6sIDTgwfsNMF3NtK5W3h8J52KQfX90ld',
+    apiKey: '',
     network: Network.ETH_SEPOLIA,
   };
 
@@ -72,7 +72,11 @@ const GameBoard = () => {
       const ladderStartPoints = [3, 8, 13, 19, 33, 36, 37, 50, 54];
       const ladderEndPoints = [12, 16, 22, 30, 52, 44, 47, 69, 63];
       const snakeStartPoints = [10, 27, 24, 31, 43, 40, 58, 70, 65];
-      const snakeEndPoints = [1, 9, 15, 23, 26, 30, 39, 51, 55];
+      const snakeEndPoints =    [1, 9, 15, 23, 26, 30, 39, 51, 55];
+
+      const ladderpoints =  [3, 12, 8, 16,  13, 22,  19, 30, 33, 52, 36, 44, 37, 47, 50,69, 54, 63];
+
+      const snakepoints = [10,1, 27,9, 24, 15,31,23, 43, 26, 40, 30, 58, 39, 70, 51, 65, 55];
 
       // const ladderStartPoints = [7, 10, 30, 31, 36, 47, 54 ];
       // const ladderEndPoints =   [14, 19, 50, 51, 42, 67, 62];

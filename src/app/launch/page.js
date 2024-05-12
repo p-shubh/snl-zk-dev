@@ -346,16 +346,11 @@ const parseContent = (content) => {
   const lines = content.split("\n");
   console.log("Lines", lines);
   const obj = {};
-  // lines.forEach(line => {
-  //   const [key, value] = line.split(": ");
-  //   obj[key.toLowerCase()] = value;
-  // });
-  // return obj;
 
   let optionsStarted = false; // Flag to track when options start
 
   lines.forEach(line => {
-    const [key, value] = line.split(": ");
+    const [key, value] = line.split(":");
 
     // Check if the line indicates the start of options
     if (key.toLowerCase() === "options") {
@@ -382,9 +377,9 @@ const parseContent = (content) => {
 };
 
 const parseContentsArray = (contents) => {
-  const contentBlocks = contents.split("Content").slice(1); // Splitting the string into content blocks
+  const contentBlocks = contents.split("\n\n").slice(1); // Splitting the string into content blocks
   const parsedContents = contentBlocks.map(block => {
-    return parseContent("Content" + block); // Prepend "Content" to each block before parsing
+    return parseContent(block); // Prepend "Content" to each block before parsing
   });
   return parsedContents;
 };
@@ -395,10 +390,10 @@ const parseContentsArray = (contents) => {
 const topic = topicName;
 
 // Construct the prompt for generating game content
-const prompt = `Generate 2 complete content related to "${topic}". Each item should include a term, definition in 1-2 lines, a question related to that term, 4 options, and its answer.`;
+const prompt = `You are tasked with creating a dataset of only 9 topics for the subject of "${topic}". Each topic should include its name, description, a question related to the topic, multiple-choice options for the question, and the correct answer. Use the following format for each topic:\n\nTopic Name : [Topic Name]\nDescription: [Description of the topic].\nQuestion: [Question related to the topic]?\nOptions:\nA) [Option A]\nB) [Option B]\nC) [Option C]\nD) [Option D]\nAnswer: [Correct answer]\n\nDiscription should contain only 15 words\nAnd Question should contain only 15 words\n\nHere's an example of how the output should look:\n\nTopic Name := Data Structures and Algorithms\nDescription: Data structures and algorithms are fundamental concepts in computer science, focusing on organizing and processing data efficiently.\nQuestion: What is the time complexity of a binary search algorithm?\nOptions:\nA) O(1)\nB) O(log n)\nC) O(n)\nD) O(n log n)\nAnswer: B) O(log n)`;
 
 const requestBody = {
-  "model": "gpt-4",
+  "model": "gpt-4-turbo-preview",
   "messages": [
       {
           "role": "user",
@@ -409,7 +404,7 @@ const requestBody = {
   "top_p": 1,
   "n": 1,
   "stream": false,
-  "max_tokens": 250,
+  "max_tokens": 4000,
   "presence_penalty": 0,
   "frequency_penalty": 0
 }
@@ -442,19 +437,40 @@ if (!response.ok) {
 
 const responseData = await response.json();
 
-// // Extract and format the generated game content
-// const generatedContent = responseData.choices[0].message.content.trim().split("Content").map((item, index) => {
-//   const [term, definition, question, options, answer] = item.split("Term");
-//   const formattedItem = { id: index + 1, term, definition, question, options, answer};
-
-//   return formattedItem;
-// }).slice(0, 72); // Limit the generated content to 72 items
-
 const parsedContents = parseContentsArray(responseData.choices[0].message.content);
-console.log(parsedContents);
 
 // Now you have the generated content in the specified format and up to 72 items
-console.log("generatedContent", parsedContents);
+console.log("generatedContent", parsedContents, responseData.choices[0].message.content);
+return parsedContents;
+  }
+
+  const generate72items = async () => {
+    setLoading(true);
+    const allParsedContents = [];
+  
+    try {
+      for (let count = 0; count < 3; count++) {
+        const parsedContents = await generateGameContentfromChatgpt();
+        if (parsedContents.length > 0) {
+
+          allParsedContents.push(parsedContents[0]);
+          allParsedContents.push(parsedContents[1]);
+          allParsedContents.push(parsedContents[2]);
+          allParsedContents.push(parsedContents[3]);
+          allParsedContents.push(parsedContents[4]);
+          allParsedContents.push(parsedContents[5]);
+          allParsedContents.push(parsedContents[6]);
+          allParsedContents.push(parsedContents[7]);
+          allParsedContents.push(parsedContents[8]);
+          console.log("allParsedContents", allParsedContents);
+        }
+      }
+      console.log("allParsedContents", allParsedContents);
+    } catch (error) {
+      console.error("Error generating items:", error);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -870,7 +886,7 @@ style={{border: "1px solid #75E2FF", color:'black'}}
               onChange={handleGenerateTextChange}
               >
               </input>
-              <button onClick={generateGameContentfromChatgpt} className='text-white mb-10'>Generate Game Data</button>
+              <button onClick={generate72items} className='text-white mb-10'>Generate Game Data</button>
 
 <div className="w-full">
               {gameData.map(item => (
@@ -987,6 +1003,7 @@ style={{border: "1px solid #75E2FF", color:'black'}}
                   alt="Loading icon"
                 />
               </div>
+              <div>We are fetching 72 items so its taking time... please wait.</div>
             </div>
           </div>
         </div>
