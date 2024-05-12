@@ -475,6 +475,12 @@ return parsedContents;
         }
       }
       console.log("allParsedContents", allParsedContents);
+
+      allParsedContents.forEach((item, index) => {
+        item.id = index; // Add id field with index value to each object
+      });
+      
+      setGameData(allParsedContents);
     } catch (error) {
       console.error("Error generating items:", error);
     } finally {
