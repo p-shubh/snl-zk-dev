@@ -366,10 +366,20 @@ const parseContent = (content) => {
 
     // If options have started, add each option to the array
     if (optionsStarted) {
-      obj.options.push(key);
+      const optionContent = key.replace(/^\w+\)\s*/, '').trim();
+      obj.options.push(optionContent);
     } else {
       // Otherwise, store other key-value pairs normally
-      obj[key.toLowerCase()] = value;
+      if(key.toLowerCase() === "answer")
+        {
+          const optionContent = value.slice(4).trim();
+          console.log("answer remove alpha", optionContent);
+          obj[key.toLowerCase()] = optionContent;
+        }
+        else{
+          obj[key.toLowerCase()] = value;
+        }
+
       optionsStarted = false;
     }
   });
@@ -390,7 +400,7 @@ const parseContentsArray = (contents) => {
 const topic = topicName;
 
 // Construct the prompt for generating game content
-const prompt = `You are tasked with creating a dataset of only 9 topics for the subject of "${topic}". Each topic should include its name, description, a question related to the topic, multiple-choice options for the question, and the correct answer. Use the following format for each topic:\n\nTopic Name : [Topic Name]\nDescription: [Description of the topic].\nQuestion: [Question related to the topic]?\nOptions:\nA) [Option A]\nB) [Option B]\nC) [Option C]\nD) [Option D]\nAnswer: [Correct answer]\n\nDiscription should contain only 15 words\nAnd Question should contain only 15 words\n\nHere's an example of how the output should look:\n\nTopic Name := Data Structures and Algorithms\nDescription: Data structures and algorithms are fundamental concepts in computer science, focusing on organizing and processing data efficiently.\nQuestion: What is the time complexity of a binary search algorithm?\nOptions:\nA) O(1)\nB) O(log n)\nC) O(n)\nD) O(n log n)\nAnswer: B) O(log n)`;
+const prompt = `You are tasked with creating a dataset of only 9 topics for the subject of "${topic}". Each topic should include its term, definition, a question related to the topic, multiple-choice options for the question, and the correct answer. Use the following format for each topic:\n\nTerm : [Topic Name]\nDefinition: [Description of the topic].\nQuestion: [Question related to the topic]?\nOptions:\nA) [Option A]\nB) [Option B]\nC) [Option C]\nD) [Option D]\nAnswer: [Correct answer]\n\nDiscription should contain only 15 words\nAnd Question should contain only 15 words\n\nHere's an example of how the output should look:\n\nTerm := Data Structures and Algorithms\nDefinition: Data structures and algorithms are fundamental concepts in computer science, focusing on organizing and processing data efficiently.\nQuestion: What is the time complexity of a binary search algorithm?\nOptions:\nA) O(1)\nB) O(log n)\nC) O(n)\nD) O(n log n)\nAnswer: B) O(log n)`;
 
 const requestBody = {
   "model": "gpt-4-turbo-preview",
@@ -449,7 +459,7 @@ return parsedContents;
     const allParsedContents = [];
   
     try {
-      for (let count = 0; count < 3; count++) {
+      for (let count = 0; count < 1; count++) {
         const parsedContents = await generateGameContentfromChatgpt();
         if (parsedContents.length > 0) {
 
@@ -461,7 +471,6 @@ return parsedContents;
           allParsedContents.push(parsedContents[5]);
           allParsedContents.push(parsedContents[6]);
           allParsedContents.push(parsedContents[7]);
-          allParsedContents.push(parsedContents[8]);
           console.log("allParsedContents", allParsedContents);
         }
       }
