@@ -32,6 +32,13 @@ export default function Dashboard() {
   const [imageInputs, setImageInputs] = useState([]);
   const [imageinputarray, setImageInputArray] = useState([]);
 
+  const [topicName, setTopicName] = useState(""); // State to store the topic name
+
+  // Function to handle input change
+  const handleGenerateTextChange = (event) => {
+    setTopicName(event.target.value); // Update the topicName state with the input value
+  };
+
 
   useEffect(() => {
     const call = () => {
@@ -385,7 +392,7 @@ const parseContentsArray = (contents) => {
 
   const generateGameContentfromChatgpt = async() => {
     // Define the topic for which you want to generate game content
-const topic = "Artificial Intelligence";
+const topic = topicName;
 
 // Construct the prompt for generating game content
 const prompt = `Generate 2 complete content related to "${topic}". Each item should include a term, definition in 1-2 lines, a question related to that term, 4 options, and its answer.`;
@@ -855,6 +862,14 @@ style={{border: "1px solid #75E2FF", color:'black'}}
                 </div>
               </div>
 
+              <input 
+              type="text" 
+              id="topicInput" 
+              placeholder="Write topic name here.."
+              value={topicName} 
+              onChange={handleGenerateTextChange}
+              >
+              </input>
               <button onClick={generateGameContentfromChatgpt} className='text-white mb-10'>Generate Game Data</button>
 
 <div className="w-full">
