@@ -333,6 +333,123 @@ export default function Dashboard() {
     );
   };
 
+  // Function to parse content and create objects
+const parseContent = (content) => {
+  console.log("content", content);
+  const lines = content.split("\n");
+  console.log("Lines", lines);
+  const obj = {};
+  // lines.forEach(line => {
+  //   const [key, value] = line.split(": ");
+  //   obj[key.toLowerCase()] = value;
+  // });
+  // return obj;
+
+  let optionsStarted = false; // Flag to track when options start
+
+  lines.forEach(line => {
+    const [key, value] = line.split(": ");
+
+    // Check if the line indicates the start of options
+    if (key.toLowerCase() === "options") {
+      optionsStarted = true;
+      obj.options = [];
+      return; // Skip processing this line
+    }
+    
+    if(key.toLowerCase() === "answer")
+      {
+        optionsStarted = false;
+      }
+
+    // If options have started, add each option to the array
+    if (optionsStarted) {
+      obj.options.push(key);
+    } else {
+      // Otherwise, store other key-value pairs normally
+      obj[key.toLowerCase()] = value;
+      optionsStarted = false;
+    }
+  });
+  return obj;
+};
+
+const parseContentsArray = (contents) => {
+  const contentBlocks = contents.split("Content").slice(1); // Splitting the string into content blocks
+  const parsedContents = contentBlocks.map(block => {
+    return parseContent("Content" + block); // Prepend "Content" to each block before parsing
+  });
+  return parsedContents;
+};
+
+
+  const generateGameContentfromChatgpt = async() => {
+    // Define the topic for which you want to generate game content
+const topic = "Artificial Intelligence";
+
+// Construct the prompt for generating game content
+const prompt = `Generate 2 complete content related to "${topic}". Each item should include a term, definition in 1-2 lines, a question related to that term, 4 options, and its answer.`;
+
+const requestBody = {
+  "model": "gpt-4",
+  "messages": [
+      {
+          "role": "user",
+          "content": prompt
+      }
+  ],
+  "temperature": 1,
+  "top_p": 1,
+  "n": 1,
+  "stream": false,
+  "max_tokens": 250,
+  "presence_penalty": 0,
+  "frequency_penalty": 0
+}
+
+// Assuming you have your API key stored somewhere accessible
+const apiKey = process.env.NEXT_PUBLIC_API_KEY;
+
+// Define the base URL for the OpenAI API
+const baseURL = "https://api.openai.com/v1/chat/completions";
+
+// Define the headers
+const headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      headers.append("Accept", "application/json");
+      headers.append(
+        "Authorization",
+        `Bearer ${apiKey}`
+      );
+
+// Fetch data from OpenAI API
+const response = await fetch(baseURL, {
+  method: "POST",
+  headers: headers,
+  body: JSON.stringify(requestBody),
+});
+
+if (!response.ok) {
+  throw new Error("Failed to fetch game content");
+}
+
+const responseData = await response.json();
+
+// // Extract and format the generated game content
+// const generatedContent = responseData.choices[0].message.content.trim().split("Content").map((item, index) => {
+//   const [term, definition, question, options, answer] = item.split("Term");
+//   const formattedItem = { id: index + 1, term, definition, question, options, answer};
+
+//   return formattedItem;
+// }).slice(0, 72); // Limit the generated content to 72 items
+
+const parsedContents = parseContentsArray(responseData.choices[0].message.content);
+console.log(parsedContents);
+
+// Now you have the generated content in the specified format and up to 72 items
+console.log("generatedContent", parsedContents);
+  }
+
   return (
     <>
     <div className="z-10 w-full flex">
@@ -737,6 +854,8 @@ style={{border: "1px solid #75E2FF", color:'black'}}
                   )}
                 </div>
               </div>
+
+              <button onClick={generateGameContentfromChatgpt} className='text-white mb-10'>Generate Game Data</button>
 
 <div className="w-full">
               {gameData.map(item => (
