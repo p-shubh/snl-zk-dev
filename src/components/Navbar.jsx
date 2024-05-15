@@ -162,14 +162,14 @@ const Navbar = () => {
     console.log("Giving some test coins to address " + address);
     const adminPrivateKey = getTestnetAdminSecretKey();
     if (!adminPrivateKey) {
-      createRuntimeError(
+      console.log(
         "Admin Secret Key not found. Please set NEXT_PUBLIC_ADMIN_SECRET_KEY environment variable."
       );
       return;
     }
-    let adminPrivateKeyArray = Uint8Array.from(
-      Array.from(fromB64(adminPrivateKey))
-    );
+    // let adminPrivateKeyArray = Uint8Array.from(
+    //   Array.from(fromB64(adminPrivateKey))
+    // );
     // Modified getting private key method using the decodeSuiPrivateKey
     const keyPair = decodeSuiPrivateKey(adminPrivateKey);
     const adminKeypair = Ed25519Keypair.fromSecretKey(keyPair.secretKey);
@@ -234,19 +234,19 @@ const Navbar = () => {
 
     // const userSalt = response.data.salt;
     if (!userSalt) {
-      createRuntimeError("Error getting userSalt");
+      console.log("Error getting userSalt");
       return;
     }
 
     //Generating User Address
-    const address = jwtToAddress(encodedJwt, BigInt(userSalt));
+    const address = jwtToAddress(encodedJwt, window.BigInt(userSalt));
 
     setUserAddress(address);
     setUserSalt(userSalt);
     const hasEnoughBalance = await checkIfAddressHasBalance(address);
     if (!hasEnoughBalance) {
       await giveSomeTestCoins(address);
-      toast.success(
+      console.log(
         "We' ve fetched some coins for you, so you can get started with Sui !",
         { duration: 8000 }
       );
@@ -278,7 +278,7 @@ const Navbar = () => {
     }
 
     if (!userKeyData) {
-      createRuntimeError("user Data is null");
+      console.log("user Data is null");
       return;
     }
 

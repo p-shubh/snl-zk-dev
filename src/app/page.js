@@ -138,7 +138,7 @@ export default function Home() {
           'radial-gradient(circle at top left, #F7418F 10%, #FFE6E6 40%)',
       }}>
               <div className='font-bold text-end' style={{color: '#F7418F'}}>Dynamic Learning Experience</div>
-              <div className='w-4/5 mt-4 text-end flex ml-auto' style={{fontSize:16}}>Whether you're ascending ladders or descending snakes, each interaction with the board presents a new opportunity to absorb valuable information.</div>
+              <div className='w-4/5 mt-4 text-end flex ml-auto' style={{fontSize:16}}>Whether you are ascending ladders or descending snakes, each interaction with the board presents a new opportunity to absorb valuable information.</div>
             </div>
             <div className="rounded-2xl px-4 py-4 mt-6 text-black" 
             style={{

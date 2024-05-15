@@ -222,7 +222,7 @@ export default function Dashboard() {
         );
       }
 
-      console.log("response game post", response);
+      // console.log("response game post", response);
 
       setcreategamedone(true);
       

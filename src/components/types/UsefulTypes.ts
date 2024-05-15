@@ -41,4 +41,4 @@ export interface ZKPPayload
         maxEpoch: number,
         salt: string,
         keyClaimName: string
-    };
+    }
