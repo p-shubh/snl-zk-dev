@@ -45,7 +45,7 @@ const GameCard = ({ game }) => {
 
   return (
     <Link href={`/games/snl/${game?.gameId}`} className="z-10">
-      <div className="border text-black rounded-2xl mt-10 bg-white">
+      <div className="border text-black rounded-2xl mt-10 bg-white h-full">
         <div className="w-full">
           {game?.picture ? (<img
             alt="alt"

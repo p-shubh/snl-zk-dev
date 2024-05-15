@@ -74,7 +74,7 @@ export default function Bingo({ params }) {
           width: "100%",
           height: "100%",
           backgroundSize: "cover",
-          backgroundImage: 'url("/snake1.png")',
+          // backgroundImage: 'url("/snake1.png")',
           top: 0,
           left: 0,
           zIndex: 0, // Ensure the blur layer is below the content

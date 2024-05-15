@@ -150,7 +150,7 @@ export default function Dashboard() {
       </div>
       
     <main
-      className="flex flex-col items-center justify-between p-20"
+      className="flex flex-col items-center justify-between p-20 min-h-screen"
       style={{ backgroundImage: `url("${bgImage}")`, backgroundSize: 'cover' }}
     >
       {/* Background div with blur */}
@@ -161,7 +161,7 @@ export default function Dashboard() {
           width: '100%',
           height: '100%',
           backgroundSize: 'cover',
-          backgroundImage: `url("${bgImage}")`,
+          // backgroundImage: `url("${bgImage}")`,
           top: 0,
           left: 0,
           zIndex: 0, // Ensure the blur layer is below the content

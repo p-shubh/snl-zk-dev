@@ -535,7 +535,7 @@ return parsedContents;
           width: '100%',
           height: '100%',
           backgroundSize: 'cover',
-          backgroundImage: `url("${bgImage}")`,
+          // backgroundImage: `url("${bgImage}")`,
           top: 0,
           left: 0,
           zIndex: 0, // Ensure the blur layer is below the content
