@@ -147,6 +147,17 @@ export default function Dashboard() {
 
       // console.log('created game:', gameData);
 
+      // Convert state variable to JSON string
+      const stateVariableJSON = JSON.stringify(gameData);
+
+      // Convert JSON string to Blob
+      const blobData = new Blob([stateVariableJSON]);
+
+      // Upload blob to IPFS
+      const metaHash = await client.storeBlob(blobData);
+
+      const ipfsmetahash = `ipfs://${metaHash}`;
+
         let snlData = {
           name: gamename,
           symbol: symbol,
@@ -154,7 +165,7 @@ export default function Dashboard() {
           coverImage: coverimg,
           description: description,
           creatorWalletAddress: wallet,
-          gameData: gameData
+          gameData: ipfsmetahash
           // type: type,
         };
 
