@@ -34,6 +34,8 @@ export default function Dashboard() {
 
   const [topicName, setTopicName] = useState(""); // State to store the topic name
 
+  const [viewhide, setviewhide] = useState(false);
+
   // Function to handle input change
   const handleGenerateTextChange = (event) => {
     setTopicName(event.target.value); // Update the topicName state with the input value
@@ -720,7 +722,7 @@ style={{border: "1px solid #75E2FF", color:'black'}}
               </div>
               )}
 
-              {
+              {/* {
                 type === 'snl' && (
                   <div>
                     <div className="flex gap-10">
@@ -752,7 +754,7 @@ style={{border: "1px solid #75E2FF", color:'black'}}
                   </div>
                   </div>
                 )
-              }
+              } */}
 
 { type === 'memory' && (
   <div className="mb-16 w-full">
@@ -899,11 +901,17 @@ style={{border: "1px solid #75E2FF", color:'black'}}
               placeholder="Write topic name here.."
               value={topicName} 
               onChange={handleGenerateTextChange}
+              className='rounded-lg'
               >
               </input>
-              <button onClick={generate72items} className='text-white mb-10'>Generate Game Data</button>
+              <button onClick={generate72items} className='text-white mb-10 mx-4 border rounded-full py-2 px-4 text-xs bg-green-500'>Generate Game Data</button>
+
+              <button onClick={()=>setviewhide(!viewhide)} className={`mb-10 border py-2 px-4 rounded-full text-xs ${viewhide ? 'bg-orange-500 text-black' : 'text-white bg-green-500'}`}>{viewhide? "Hide" : "Show"} Game Data to view or edit</button>
 
 <div className="w-full">
+
+{ viewhide && (
+<>
               {gameData.map(item => (
         <div key={item.id} className='mb-10'>
           <div className="flex flex-col">
@@ -919,19 +927,13 @@ style={{border: "1px solid #75E2FF", color:'black'}}
           </div>
           {item.question && (
             <div>
+              <div className='flex flex-col'>
               <input
                 type="text"
                 value={item.question}
                 onChange={e => handleInputChange(item.id, 'question', e.target.value)}
               />
-              <select
-                value={item.answer}
-                onChange={e => handleInputChange(item.id, 'answer', e.target.value)}
-              >
-                {item.options.map((option, index) => (
-                  <option key={index}>{option}</option>
-                ))}
-              </select>
+              </div>
               {item.options.map((option, index) => (
                 <input
                   key={index}
@@ -940,10 +942,20 @@ style={{border: "1px solid #75E2FF", color:'black'}}
                   onChange={e => handleOptionChange(item.id, index, e.target.value)}
                 />
               ))}
+              <select
+                value={item.answer}
+                onChange={e => handleInputChange(item.id, 'answer', e.target.value)}
+              >
+                {item.options.map((option, index) => (
+                  <option key={index}>{option}</option>
+                ))}
+              </select>
             </div>
           )}
         </div>
       ))}
+</>
+)}
 
 </div>
 
