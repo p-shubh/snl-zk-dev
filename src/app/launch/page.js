@@ -1024,13 +1024,14 @@ style={{border: "1px solid #75E2FF", color:'black'}}
         >
           <div className="relative p-4 w-full max-h-full">
             <div className="relative rounded-lg shadow">
+            <div className='text-white text-center text-2xl lg:w-1/3 mx-auto'>We are fetching 72 items so please wait 🙂</div>
+
               <div className="flex justify-center gap-4">
                 <img
                   src="/dice_loader.gif"
                   alt="Loading icon"
                 />
               </div>
-              <div>We are fetching 72 items so its taking time... please wait.</div>
             </div>
           </div>
         </div>
