@@ -35,6 +35,7 @@ export default function Dashboard() {
   const [topicName, setTopicName] = useState(""); // State to store the topic name
 
   const [viewhide, setviewhide] = useState(false);
+  const [gamedataloading, setgamedataLoading] = useState(false);
 
   // Function to handle input change
   const handleGenerateTextChange = (event) => {
@@ -404,7 +405,7 @@ return parsedContents;
   }
 
   const generate72items = async () => {
-    setLoading(true);
+    setgamedataLoading(true);
     const allParsedContents = [];
   
     try {
@@ -433,7 +434,7 @@ return parsedContents;
     } catch (error) {
       console.error("Error generating items:", error);
     } finally {
-      setLoading(false);
+      setgamedataLoading(false);
     }
   }
 
@@ -971,6 +972,26 @@ style={{border: "1px solid #75E2FF", color:'black'}}
         >
           <div className="relative p-4 w-full max-h-full">
             <div className="relative rounded-lg shadow">
+              <div className="flex justify-center gap-4">
+                <img
+                  src="/dice_loader.gif"
+                  alt="Loading icon"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {
+        gamedataloading && (
+          <div
+          style={{ backgroundColor: "#222944E5" }}
+          className="flex overflow-y-auto overflow-x-hidden fixed inset-0 z-50 justify-center items-center w-full max-h-full"
+          id="popupmodal"
+        >
+          <div className="relative p-4 w-full max-h-full">
+            <div className="relative rounded-lg shadow">
             <div className='text-white text-center text-2xl lg:w-1/3 mx-auto'>We are fetching 72 items so please wait 🙂</div>
 
               <div className="flex justify-center gap-4">
@@ -982,7 +1003,8 @@ style={{border: "1px solid #75E2FF", color:'black'}}
             </div>
           </div>
         </div>
-      )}
+        )
+      }
 
     </main>
     </>
