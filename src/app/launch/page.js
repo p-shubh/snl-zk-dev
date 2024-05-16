@@ -146,61 +146,6 @@ export default function Dashboard() {
 
       // console.log('created game:', gameData);
 
-      if (type === 'bingo') {
-        let gameData = {
-          name: gamename,
-          startTimestamp: dateAsU64.toString(),
-          symbol: symbol,
-          picture: picture,
-          coverImage: coverimg,
-          description: description,
-          creatorWalletAddress: wallet,
-          type: type,
-          price: price.toString()
-        };
-
-        const response = await fetch(
-        `https://virtuegateway.myriadflow.com/api/v1.0/game`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            // 'Authorization': `Bearer ${auth}`
-          },
-          body: JSON.stringify(gameData),
-        }
-      );
-      }
-      else if(type === 'memory')
-      {
-        let memoryData = {
-          name: gamename,
-          symbol: symbol,
-          picture: picture,
-          coverImage: coverimg,
-          description: description,
-          creatorWalletAddress: wallet,
-          type: type,
-          imageList: imageinputarray,
-          boxSize: parseInt(grids)
-        }
-
-        console.log(imageinputarray);
-
-          const response = await fetch(
-          `https://virtuegateway.myriadflow.com/api/v1.0/memory`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              // 'Authorization': `Bearer ${auth}`
-            },
-            body: JSON.stringify(memoryData),
-          }
-        );
-      }
-      else
-      {
         let snlData = {
           name: gamename,
           symbol: symbol,
@@ -208,8 +153,11 @@ export default function Dashboard() {
           coverImage: coverimg,
           description: description,
           creatorWalletAddress: wallet,
-          type: type,
+          gameData: gameData
+          // type: type,
         };
+
+        console.log("snl game data", snlData);
 
           const response = await fetch(
           `https://virtuegateway.myriadflow.com/api/v1.0/snl`,
@@ -222,7 +170,6 @@ export default function Dashboard() {
             body: JSON.stringify(snlData),
           }
         );
-      }
 
       // console.log("response game post", response);
 
