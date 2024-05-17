@@ -163,7 +163,8 @@ export default function Dashboard() {
       
     <main
       className="flex flex-col items-center justify-between p-20 min-h-screen"
-      style={{ backgroundImage: `url("${bgImage}")`, backgroundSize: 'cover' }}
+      // style={{ backgroundImage: `url("${bgImage}")`, backgroundSize: 'cover' }}
+      style={{backgroundColor:'#232C12'}}
     >
       {/* Background div with blur */}
       <div

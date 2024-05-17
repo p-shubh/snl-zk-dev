@@ -83,7 +83,7 @@ const GameCard = ({ game }) => {
               height="100"
             />)}
           </div>
-          <div className="bg-green-500 rounded-lg px-4 py-2 m-2">Enter game</div>
+          <div className="rounded-lg px-4 py-2 m-2 text-white" style={{backgroundColor:'#232C12'}}>Enter game</div>
           </div>
 
           <div className="m-4">

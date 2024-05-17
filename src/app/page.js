@@ -164,24 +164,23 @@ export default function Home() {
 
       <main
         className="flex min-h-screen flex-col items-center justify-between p-20"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle at bottom left, #040819 10%, #0162FF 40% , #1D73FF, #5696FF, #8EB9FF, #AACBFF)',
-        }}
+        // style={{
+        //   backgroundImage:
+        //     'radial-gradient(circle at bottom left, #040819 10%, #0162FF 40% , #1D73FF, #5696FF, #8EB9FF, #AACBFF)',
+        // }}
+        style={{backgroundImage: 'url(/snlbg.png)'}}
       >
-        <div className="lg:flex md:flex justify-between gap-20 my-10">
+        <div className="mt-20 flex">
           <div className="my-auto">
-            <div className="text-6xl text-white font-bold mb-10 text-center">
-              SNL
+            <div className="text-6xl text-white font-bold mb-10 text-center w-2/3 leading-normal mx-auto uppercase" style={{fontFamily:'cursive'}}>
+            Your Onchain 
+Learning   Adventure
             </div>
             <div className="text-center text-white">
-              Onchain game platform to experience the classic Snake and{' '}
-              <br></br>
-              Ladder game reimagined for modern learning, with dynamic <br></br>
-              content integration for an engaging educational journey.
+            Experience Classic Fun and Earn Unique NFTs for Your Achievements
             </div>
           </div>
-          <div
+          {/* <div
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className={`pb-8 border border-gray-500 rounded-3xl transition-transform duration-300 mt-20 lg:mt-0 md:mt-0 ${
@@ -205,21 +204,24 @@ export default function Home() {
                 your achievement.
               </div>
             </Link>
-          </div>
+          </div> */}
         </div>
+      </main>
 
-        <div className="flex flex-col items-center justify-center min-h-screen text-white mt-40 max-w-5xl">
+<div style={{backgroundColor:'#232C12'}}>
+        <div className="flex flex-col items-center justify-center min-h-screen text-white max-w-5xl mx-auto py-20">
         <motion.div
               animate={animation3}
               transition={{ duration: 1.5 }}
               className="text-center"
               >
-            <h1 className="lg:text-5xl font-bold mb-8 text-2xl">
-              Unleash Your Competitive Spirit
+            <h1 className="lg:text-4xl font-bold mb-8 text-2xl w-2/3 mx-auto tracking-wider uppercase leading-relaxed" style={{fontFamily:'monospace'}}>
+              Launch and Play Board 
+Games with Ease
             </h1>
-            <div className="lg:text-2xl font-bold mb-8 text-lg">
+            {/* <div className="lg:text-2xl font-bold mb-8 text-lg">
               Launch and Play Board Games with Ease!
-            </div>
+            </div> */}
             </motion.div>
 
           <div id="features" className="mt-16 lg:flex md:flex gap-10" ref={ref}>
@@ -307,7 +309,7 @@ export default function Home() {
             </motion.div>
           </div>
         </div>
-      </main>
+        </div>
     </>
   );
 }
