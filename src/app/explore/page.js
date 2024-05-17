@@ -77,7 +77,19 @@ export default function Dashboard() {
       console.error('Error fetching reviews:', error);
     }
   }
-  else if(pagestatus === 'snl'){try {
+  else if(pagestatus === 'snl'){
+    try {
+
+      const options = {
+        method: 'GET',
+        headers: {accept: 'application/json', 'x-api-key': process.env.NEXT_PUBLIC_BLOCKVISION_KEY }
+      };
+      
+      fetch('https://api.blockvision.org/v2/sui/nft/nftList?objectType=0xf1681f601a1c021a0b4c8c8859d50917308fcbebfd19364c4e856ac670bb8496%3A%3Asuishi%3A%3ASuishi&pageIndex=4&pageSize=20', options)
+        .then(response => response.json())
+        .then(response => console.log("response from blockvision", response))
+        .catch(err => console.error(err));
+
     const config = {
       headers: {
         Accept: "application/json, text/plain, */*",
