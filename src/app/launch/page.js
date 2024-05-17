@@ -486,7 +486,8 @@ return parsedContents;
 
     <main
       className="flex flex-col items-center justify-between lg:p-20 md:p-20 py-14"
-      style={{ backgroundImage: `url("${bgImage}")`, backgroundSize: 'cover' }}
+      // style={{ backgroundImage: `url("${bgImage}")`, backgroundSize: 'cover' }}
+      style={{ backgroundImage: `url("launchbg.png")`}}
     >
       {/* Background div with blur */}
       <div
@@ -506,13 +507,14 @@ return parsedContents;
       {pagestatus === 'create' && (
         <div className="w-full z-10 lg:px-60">
           <div
-            className="px-10 py-10 bg-black rounded-2xl mt-0"
+            className="px-10 py-10 bg-white rounded-2xl mt-0"
             style={{
               border: '1px solid #0162FF',
               boxShadow: 'inset -10px -10px 60px 0 rgba(255, 255, 255, 0.4)',
             }}
           >
             <div>
+              <div className="font-bold text-2xl">Launch your Game today</div>
               <div className="lg:flex md:flex justify-between">
                 <div className="lg:w-1/2 md:w-1/2 mt-10">
               <input
@@ -521,7 +523,7 @@ return parsedContents;
                 value={gamename}
                 onChange={(e) => setgamename(e.target.value)}
                 className="mb-8 shadow border appearance-none rounded-xl w-full py-4 px-6 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
-                style={{border: "1px solid #75E2FF", color:'black'}}
+                style={{border: "1px solid #75E2FF", color:'black', backgroundColor:'#41C9E2'}}
               />
 
               <input
@@ -530,12 +532,12 @@ return parsedContents;
                 value={symbol}
                 onChange={(e) => setsymbol(e.target.value)}
                 className="mb-4 shadow border appearance-none rounded-xl w-full py-4 px-6 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
-                style={{border: "1px solid #75E2FF", color:'black'}}
+                style={{border: "1px solid #75E2FF", color:'black', backgroundColor:'#41C9E2'}}
               />
                                         
               </div>
 
-              <div className="rounded-full h-48 w-48 ring-1 ring-white bg-white w-1/2">
+              <div className="rounded-full h-48 w-48 ring-1 ring-black bg-white w-1/2">
                 {picture ? (
                   <>
                     <img
@@ -566,7 +568,7 @@ return parsedContents;
                       />
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-10 w-10 fill-white stroke-indigo-500"
+                        className="h-10 w-10 fill-white stroke-blue-500"
                         viewBox="0 0 32 32"
                         stroke="currentColor"
                         stroke-width="2"
@@ -585,11 +587,11 @@ return parsedContents;
 
               <input
                 type="text"
-                placeholder="Description"
+                placeholder="Describe your game"
                 value={description}
                 onChange={(e) => setdescription(e.target.value)}
                 className="mt-4 mb-4 shadow border appearance-none rounded-xl w-full py-4 px-6 text-gray-200 leading-tight focus:outline-none focus:shadow-outline"
-                style={{border: "1px solid #75E2FF", color:'black'}}
+                style={{border: "1px solid #75E2FF", color:'black', backgroundColor:'#41C9E2'}}
               />
 
               { type === 'bingo' && (
@@ -812,10 +814,10 @@ style={{border: "1px solid #75E2FF", color:'black'}}
                                         </div>
 )}
 
-<div className="text-white mb-2 mt-4">Upload Cover Image</div>
+<div className="text-black mb-2 mt-4">Upload Cover Image</div>
 
               <div className="flex items-center lg:justify-start md:justify-start justify-center mb-10">
-                <div className="w-full h-48 ring-1 ring-gray-200 rounded-md">
+                <div className="w-full h-48 ring-1 ring-black rounded-md">
                   {coverimg ? (
                     <img
                       alt="alt"
@@ -838,7 +840,7 @@ style={{border: "1px solid #75E2FF", color:'black'}}
                       />
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        className="h-10 w-10 fill-none stroke-white"
+                        className="h-10 w-10 fill-none stroke-blue-500"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
                         stroke-width="2"
@@ -860,12 +862,12 @@ style={{border: "1px solid #75E2FF", color:'black'}}
               placeholder="Write topic name here.."
               value={topicName} 
               onChange={handleGenerateTextChange}
-              className='rounded-lg'
+              className='rounded-lg border-none py-3' style={{backgroundColor:'#41C9E2'}}
               >
               </input>
-              <button onClick={generate72items} className='text-white mb-10 mx-4 border rounded-full py-2 px-4 text-xs bg-green-500'>Generate Game Data</button>
+              <button onClick={generate72items} className='text-white mb-10 mx-4 border rounded-lg py-4 px-4 text-xs' style={{backgroundColor:'#04AE91'}}>Generate Game Data</button>
 
-              <button onClick={()=>setviewhide(!viewhide)} className={`mb-10 border py-2 px-4 rounded-full text-xs ${viewhide ? 'bg-orange-500 text-black' : 'text-white bg-green-500'}`}>{viewhide? "Hide" : "Show"} Game Data to view or edit</button>
+              <button onClick={()=>setviewhide(!viewhide)} className={`mb-10 border py-4 px-4 rounded-lg text-xs ${viewhide ? 'bg-orange-500 text-black' : 'text-white bg-[#04AE91]'}`}>{viewhide? "Hide" : "Show"} Game Data to view or edit</button>
 
 <div className="w-full">
 
@@ -920,10 +922,10 @@ style={{border: "1px solid #75E2FF", color:'black'}}
 
               <button
                 onClick={creategame}
-                className="mt-4 rounded-lg py-2 px-8 text-black justify-end flex ml-auto"
-                style={{ backgroundColor: '#11D9C5' }}
+                className="rounded-lg py-4 px-10 text-white justify-end flex ml-auto text-xl"
+                style={{ backgroundColor: '#008770' }}
               >
-                Create Game
+                Launch
               </button>
             </div>
           </div>
