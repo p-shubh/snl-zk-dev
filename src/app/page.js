@@ -208,7 +208,7 @@ Learning   Adventure
         </div>
       </main>
 
-<div style={{backgroundColor:'#232C12'}}>
+<div style={{backgroundColor:'#232C12'}} ref={ref}>
         <div className="flex flex-col items-center justify-center min-h-screen text-white max-w-5xl mx-auto py-20">
         <motion.div
               animate={animation3}
@@ -224,8 +224,32 @@ Games with Ease
             </div> */}
             </motion.div>
 
-          <div id="features" className="mt-16 lg:flex md:flex gap-10" ref={ref}>
-            {/* Your feature sections here */}
+            <div>
+            <motion.div
+                animate={animation}
+                transition={{ type: "tween", duration: 1 }}
+                >
+              <div className="flex gap-2">
+                  <div className="w-60 h-60"><img src="/landing1.png"/></div>
+                  <div style={{backgroundColor:'#11D9C5'}} className="w-60 h-60"><img src="/landing2.png" className='-mt-14'/></div>
+                  <div style={{backgroundColor:'#7C75FF'}} className="w-60 h-60 pt-20 text-2xl p-4">Dynamic Learning Experience</div>
+                  <div className="w-60 h-60"></div>
+              </div>
+              </motion.div>
+              <motion.div
+                animate={animation2}
+                transition={{ type: "tween", duration: 1 }}
+              >
+              <div className="flex gap-2 mt-2">
+                  <div className="w-60 h-60"></div>
+                  <div style={{backgroundColor:'#FFE072'}} className="w-60 h-60"></div>
+                  <div style={{backgroundColor:'#E6007A'}} className="w-60 h-60 pt-16 text-2xl p-4">Educational Content Integration</div>
+                  <div className="w-60 h-60" style={{backgroundColor:'#38FF70'}}><img src="/landing3.png" className='ml-10 mt-4'/></div>
+              </div>
+              </motion.div>
+            </div>
+
+          {/* <div id="features" className="mt-16 lg:flex md:flex gap-10" ref={ref}>
             <motion.div
                 animate={animation}
                 transition={{ type: "tween", duration: 1 }}
@@ -307,7 +331,7 @@ Games with Ease
                 }}
               ></div>
             </motion.div>
-          </div>
+          </div> */}
         </div>
         </div>
     </>
