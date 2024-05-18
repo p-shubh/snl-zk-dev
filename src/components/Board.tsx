@@ -29,6 +29,8 @@ const GameBoard = () => {
   const [snakeCount, setSnakeCount] = useState<number>(0);
   const [ladderCount, setLadderCount] = useState<number>(0);
 
+  const [dicemoving, setdicemoving] = useState<boolean>(false);
+
   // State for displaying QuestionModal
   const [questionModalVisible, setQuestionModalVisible] =
     useState<boolean>(false);
@@ -50,11 +52,20 @@ const GameBoard = () => {
   console.log(address);
   const alchemy = new Alchemy(settings);
 
-  const getRandomNumber = () => {
-    const randomDecimal = Math.random();
-    const randomNumber = Math.floor(randomDecimal * 6) + 1;
-    return randomNumber;
-  };
+  const delay = (ms:any) => new Promise(resolve => setTimeout(resolve, ms));
+
+const getRandomNumber = async (): Promise<number> => {
+  setdicemoving(true);
+
+  const randomDecimal = Math.random();
+  const randomNumber = Math.floor(randomDecimal * 6) + 1;
+
+  await delay(2000); // Delay for 2 seconds
+
+  setdicemoving(false);
+
+  return randomNumber;
+};
 
   const dieNumberToSVG: Record<number, string> = {
     1: 'Dice-1.svg',
@@ -277,14 +288,16 @@ const GameBoard = () => {
       </div>
 
 
-      <div className="w-fulll flex justify-center" style={{backgroundColor:'transparent'}}>
+      <div className="w-fulll flex justify-center" 
+      // style={{filter: 'brightness(200%)'}}
+      >
         <div className="flex px-4 h-[3.5rem] w-[25rem] justify-center mt-10 gap-6 rounded-full" style={{backgroundColor:'#FFFFFFB2'}}>
           <div className="flex w-full items-center justify-between">
             <div>
               <Button
                 variant={isRollDisabled || gameWon ? 'inactive' : 'primary'}
-                onClick={() => {
-                  const rollResult = getRandomNumber();
+                onClick={async () => {
+                  const rollResult = await getRandomNumber();
                   setDieNumber(rollResult);
                   setIsMoveDisable(false);
                   setIsRollDisable(true);
@@ -300,7 +313,14 @@ const GameBoard = () => {
                     alt="die-icon"
                   />
                 ) : (
-                  'Roll Die'
+                  // <img src="/dice-roll-dice.gif" className="w-8"/>
+                  <>
+                  { dicemoving ? (
+                    <img src="/dice-roll-dice.gif" className="w-8"/>
+                  ): (
+                    <img src="/static_dice.png" className="w-8"/>
+                  )}
+                  </>
                 )}
               </Button>
             </div>
