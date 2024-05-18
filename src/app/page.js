@@ -163,14 +163,14 @@ export default function Home() {
       </header>
 
       <main
-        className="flex min-h-screen flex-col items-center justify-between p-20"
+        className="flex min-h-screen flex-col items-center justify-between"
         // style={{
         //   backgroundImage:
         //     'radial-gradient(circle at bottom left, #040819 10%, #0162FF 40% , #1D73FF, #5696FF, #8EB9FF, #AACBFF)',
         // }}
         style={{backgroundImage: 'url(/snlbg.png)'}}
       >
-        <div className="mt-20 flex">
+        <div className="pt-60 flex">
           <div className="my-auto">
             <div className="text-6xl text-white font-bold mb-10 text-center w-2/3 leading-normal mx-auto uppercase" style={{fontFamily:'cursive'}}>
             Your Onchain 
