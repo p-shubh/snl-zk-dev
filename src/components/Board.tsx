@@ -67,6 +67,16 @@ const GameBoard = () => {
 
   const getDieSVGUrl = (number: number) => `/${dieNumberToSVG[number]}`;
 
+  useEffect(() => {
+    if (isMoveDisabled === false && isRollDisabled === true) {
+      const timer = setTimeout(() => {
+        handleMove();
+      }, 1000); // 1000ms delay before calling handleMove
+
+      return () => clearTimeout(timer);
+    }
+  }, [isMoveDisabled, isRollDisabled]);
+
   const handleMove = () => {
     if (!isMoveDisabled) {
       const ladderStartPoints = [3, 8, 13, 19, 33, 36, 37, 50, 54];
@@ -197,11 +207,16 @@ const GameBoard = () => {
       setOptionClicked(selectedOption);
     }
   };
+
+  const blurbackground = {
+    backgroundImage: 'linear-gradient(to bottom, #7AB2B2, #4D869C)',
+  }
+
   return (
     <>
-    <div className="flex">
-      <div className="flex justify-center items-stretch">
-        <div className="border-2 bg-board bg-cover lg:bg-boardlg border-[#65E4E0] overflow-hidden">
+    <div className="flex gap-4">
+      <div className="flex justify-center items-stretch gap-4 backdrop-blur-2xl rounded-3xl py-10 pl-10">
+        <div className="bg-cover overflow-hidden" style={{backgroundImage:`url("/board_game.png")`}}>
           <div className="grid grid-cols-9 grid-rows-8">
             {gameContent
               .slice()
@@ -209,8 +224,8 @@ const GameBoard = () => {
               .map(({ id, term, definition }) => (
                 <div
                   key={id}
-                  className="h-[3.5rem] w-[7.5rem] lg:w-[5.625rem] border border-[#65E4E0] p-[4px] lg:p-[3px] flex justify-between flex-col text-sm cursor-pointer hover:border-[#37F6AE]"
-                  style={id === playerPosition ? { backgroundColor: '#0E46A3' } : {}}
+                  className="h-[5rem] w-[7.5rem] lg:w-[6rem] p-[4px] lg:p-[3px] flex justify-between flex-col text-sm"
+                  style={id === playerPosition ? { backgroundColor: '#FFE6E6' } : {}}
                 >
                   <div className="text-xs whitespace-nowrap overflow-ellipsis overflow-hidden">
                     {term}
@@ -228,10 +243,10 @@ const GameBoard = () => {
                       ''
                     )}
                   </div>
-                  <div className="text-[15px] p-0 m-0 font-medium flex items-center justify-between text-white">
+                  <div className="text-[15px] p-0 m-0 font-medium flex items-center justify-between text-black">
                     {id}
                     <IoIosEye
-                      className="hover:text-primary active:text-primary" style={{color:'#C3FF93'}}
+                      className="hover:text-primary active:text-primary cursor-pointer" style={{color:'#7469B6'}}
                       onClick={() => {
                         setSelectedCell(
                           selectedCell === null || selectedCell.term !== term
@@ -261,8 +276,9 @@ const GameBoard = () => {
         </div>
       </div>
 
-      <div className="w-fulll flex justify-center">
-        <div className="flex px-[40] lg:px-[30px] bg-grad h-[7.5rem] lg:h-[4.5rem] mb-0 w-[37.5rem] lg:w-[28.125rem] justify-center mt-8 lg:mt-8 gap-6 rounded-[20px]">
+
+      <div className="w-fulll flex justify-center" style={{backgroundColor:'transparent'}}>
+        <div className="flex px-4 h-[3.5rem] w-[25rem] justify-center mt-10 gap-6 rounded-full" style={{backgroundColor:'#FFFFFFB2'}}>
           <div className="flex w-full items-center justify-between">
             <div>
               <Button
@@ -288,13 +304,14 @@ const GameBoard = () => {
                 )}
               </Button>
             </div>
-            <div className="flex flex-col justify-center relative font-medium -top-1 gap-y-1 items-center">
-              Position
-              <div className="w-[48px] h-[28px] lg:h-[21px] text-white text-[1rem] flex items-center justify-center lg:text-[14px] lg:w-[36px] rounded-[5px] bg-[#353535CC]">
+            <div className="font-bold text-lg">Position</div>
+
+            <div className="flex flex-col justify-center relative font-medium gap-y-1 items-center">
+              <div className="text-white flex items-center justify-center rounded-full bg-[#04AE91] px-10 py-1.5">
                 {playerPosition}
               </div>
             </div>
-            <div>
+            {/* <div>
               <Button
                 variant={isMoveDisabled ? 'inactive' : 'primary'}
                 onClick={handleMove}
@@ -302,7 +319,7 @@ const GameBoard = () => {
               >
                 Move
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

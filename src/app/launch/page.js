@@ -487,7 +487,7 @@ return parsedContents;
     <main
       className="flex flex-col items-center justify-between lg:p-20 md:p-20 py-14"
       // style={{ backgroundImage: `url("${bgImage}")`, backgroundSize: 'cover' }}
-      style={{ backgroundImage: `url("launchbg.png")`}}
+      style={{ backgroundImage: `url("/launchbg.png")`}}
     >
       {/* Background div with blur */}
       <div
@@ -507,10 +507,11 @@ return parsedContents;
       {pagestatus === 'create' && (
         <div className="w-full z-10 lg:px-60">
           <div
-            className="px-10 py-10 bg-white rounded-2xl mt-0"
+            className="px-10 py-10 rounded-2xl mt-0"
             style={{
               border: '1px solid #0162FF',
               boxShadow: 'inset -10px -10px 60px 0 rgba(255, 255, 255, 0.4)',
+              backgroundColor:'#E5E7EB'
             }}
           >
             <div>

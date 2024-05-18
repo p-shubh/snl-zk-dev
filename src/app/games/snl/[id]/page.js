@@ -64,7 +64,7 @@ export default function Bingo({ params }) {
 
     <main
       className="flex min-h-screen flex-col items-center justify-between p-10"
-      style={{ backgroundImage: 'url("/snake1.png")', backgroundSize: "cover" }}
+      style={{ backgroundImage: 'url("/bggame.png")', backgroundSize: "cover" }}
     >
       {/* Background div with blur */}
       <div
@@ -80,7 +80,7 @@ export default function Bingo({ params }) {
           zIndex: 0, // Ensure the blur layer is below the content
         }}
       />
-      <div className="z-10 backdrop-blur-2xl p-10 rounded-2xl" style={blurbackground}>
+      <div className="z-10">
         <GameBoard />
     </div>
 
