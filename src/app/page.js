@@ -8,11 +8,14 @@ import { Link as ScrollLink } from 'react-scroll';
 import { Zoom } from 'react-reveal';
 import { useInView } from 'react-intersection-observer';
 import { useAnimation, motion } from 'framer-motion';
+import useFonts from "@/components/hooks/useFonts";
 
 export default function Home() {
   const [wallet, setwallet] = useState('');
   const [isHovered, setIsHovered] = useState(false);
   const [isHovered2, setIsHovered2] = useState(false);
+
+  const { righteous } = useFonts();
 
   const { ref, inView } = useInView({ threshold: 0.3 });
   const animation = useAnimation();
@@ -172,7 +175,7 @@ export default function Home() {
       >
         <div className="pt-60 flex">
           <div className="my-auto">
-            <div className="text-6xl text-white font-bold mb-10 text-center w-2/3 leading-normal mx-auto uppercase" style={{fontFamily:'cursive'}}>
+            <div className="text-7xl text-white font-bold mb-10 text-center w-2/3 leading-normal mx-auto uppercase" style={righteous.style}>
             Your Onchain 
 Learning   Adventure
             </div>
@@ -215,7 +218,7 @@ Learning   Adventure
               transition={{ duration: 1.5 }}
               className="text-center"
               >
-            <h1 className="lg:text-4xl font-bold mb-8 text-2xl w-2/3 mx-auto tracking-wider uppercase leading-relaxed" style={{fontFamily:'monospace'}}>
+            <h1 className="lg:text-4xl font-bold mb-8 text-2xl w-2/3 mx-auto tracking-wider uppercase leading-relaxed" style={righteous.style}>
               Launch and Play Board 
 Games with Ease
             </h1>
