@@ -210,6 +210,7 @@ const GameBoard = () => {
                 <div
                   key={id}
                   className="h-[3.5rem] w-[7.5rem] lg:w-[5.625rem] border border-[#65E4E0] p-[4px] lg:p-[3px] flex justify-between flex-col text-sm cursor-pointer hover:border-[#37F6AE]"
+                  style={id === playerPosition ? { backgroundColor: '#0E46A3' } : {}}
                 >
                   <div className="text-xs whitespace-nowrap overflow-ellipsis overflow-hidden">
                     {term}
@@ -308,7 +309,7 @@ const GameBoard = () => {
       </div>
 
       {selectedCell && (
-        <div className="fixed top-0 left-0 z-50 bg-cover min-h-screen right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-75">
+        <div className="fixed top-0 left-0 z-50 bg-cover right-0 bottom-0 flex items-center justify-center bg-black bg-opacity-75">
           <div className="p-4 bg-white bg-gradient bg-cover min-h-[20rem] gap-y-4 lg:gap-y-3 flex flex-col justify-between w-[54rem] px-8 rounded-lg">
             <h1 className="font-bold text-[32px]">{selectedCell.term}</h1>
             <p className="text-[#4e4e4e] font-medium">
