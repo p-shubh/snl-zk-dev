@@ -288,10 +288,8 @@ const getRandomNumber = async (): Promise<number> => {
       </div>
 
 
-      <div className="w-fulll flex justify-center" 
-      // style={{filter: 'brightness(200%)'}}
-      >
-        <div className="flex px-4 h-[3.5rem] w-[25rem] justify-center mt-10 gap-6 rounded-full" style={{backgroundColor:'#FFFFFFB2'}}>
+      <div className="flex justify-center rounded-3xl p-4" style={{backgroundImage:`url("/light_bg_game.png")`}}>
+        <div className="flex px-4 h-[3.5rem] w-[22rem] justify-center mt-10 gap-6 rounded-full mx-8" style={{backgroundColor:'#FFFFFFB2'}}>
           <div className="flex w-full items-center justify-between">
             <div>
               <Button
@@ -303,6 +301,7 @@ const getRandomNumber = async (): Promise<number> => {
                   setIsRollDisable(true);
                 }}
                 disabled={isRollDisabled || gameWon}
+                style={{backgroundColor:'#04AE91'}}
               >
                 {isRollDisabled ? (
                   <Image
