@@ -246,18 +246,6 @@ const getRandomNumber = async (): Promise<number> => {
     backgroundImage: 'linear-gradient(to bottom, #7AB2B2, #4D869C)',
   }
 
-  // const intializeGame = () => {
-  //   // const packageObjectId = "0x486a3e34613b3de56265f0ff9dc9a25e334aadc0c2d0cabf720f57d01af52a6f";
-  //   // tx.moveCall({
-  //   //   target: ${packageObjectId}::mynft::mint,
-  //   //   arguments: [
-  //   //     tx.pure("name"),        // Name argument
-  //   //     tx.pure("description"), // Description argument
-  //   //     tx.pure("url"),         // URL argument
-  //   //   ],
-  //   // });
-  // }
-
   const [zkProof, setZkProof] = useState<ZkLoginSignatureInputs | null>(null);
   const [jwtEncoded, setJwtEncoded] = useState<string | null>(null);
   const [userSalt, setUserSalt] = useState<string | null>(null);
@@ -365,16 +353,16 @@ const getRandomNumber = async (): Promise<number> => {
 
     const txb = new TransactionBlock();
 
-    const packageObjectId = "0x486a3e34613b3de56265f0ff9dc9a25e334aadc0c2d0cabf720f57d01af52a6f";
+    const packageObjectId = "0x6c8c0bb5fbee9f0d91510d54f2e8b07e1a278da19ecddf65b17e3da48d0f8c97";
 
     //Just a simple Demo call to create a little NFT weapon :p
     txb.moveCall({
       // target: `${envmintfucn}`, //demo package published on testnet
-      target: `${packageObjectId}::mynft::mint`,
+      target: `${packageObjectId}::Snl::Initialize_game`,
       arguments: [
         txb.pure("name"),        // Name argument
         txb.pure("description"), // Description argument
-        txb.pure("url"), 
+        // txb.pure("url"), 
       ],
     });
     txb.setSender(userAddress!);
