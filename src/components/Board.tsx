@@ -10,6 +10,29 @@ import { Network, Alchemy } from 'alchemy-sdk';
 import Cookies from "js-cookie";
 import CongratulationsModal from './CongratulationsModal';
 import { useRouter } from 'next/navigation';
+import jwt_decode from "jwt-decode";
+import {
+  SerializedSignature,
+  decodeSuiPrivateKey,
+} from "@mysten/sui.js/cryptography";
+import { Ed25519Keypair } from "@mysten/sui.js/keypairs/ed25519";
+import { TransactionBlock } from "@mysten/sui.js/transactions";
+import {
+  genAddressSeed,
+  getZkLoginSignature,
+  jwtToAddress,
+  getExtendedEphemeralPublicKey,
+} from "@mysten/zklogin";
+import { useSui } from "../components/hooks/useSui";
+import { ZkLoginSignatureInputs } from "@mysten/sui.js/dist/cjs/zklogin/bcs";
+import {
+  GetSaltRequest,
+  LoginResponse,
+  UserKeyData,
+  ZKPPayload,
+  ZKPRequest,
+} from "../components/types/UsefulTypes";
+import axios from "axios";
 
 const GameBoard = () => {
   const [isLoadingGame, setIsLoadingGame] = useState<boolean>(true);
@@ -223,6 +246,193 @@ const getRandomNumber = async (): Promise<number> => {
     backgroundImage: 'linear-gradient(to bottom, #7AB2B2, #4D869C)',
   }
 
+  // const intializeGame = () => {
+  //   // const packageObjectId = "0x486a3e34613b3de56265f0ff9dc9a25e334aadc0c2d0cabf720f57d01af52a6f";
+  //   // tx.moveCall({
+  //   //   target: ${packageObjectId}::mynft::mint,
+  //   //   arguments: [
+  //   //     tx.pure("name"),        // Name argument
+  //   //     tx.pure("description"), // Description argument
+  //   //     tx.pure("url"),         // URL argument
+  //   //   ],
+  //   // });
+  // }
+
+  const [zkProof, setZkProof] = useState<ZkLoginSignatureInputs | null>(null);
+  const [jwtEncoded, setJwtEncoded] = useState<string | null>(null);
+  const [userSalt, setUserSalt] = useState<string | null>(null);
+  const [txDigest, setTxDigest] = useState<string | null>(null);
+  const [userAddress, setUserAddress] = useState<string | null>(null);
+
+  const { suiClient } = useSui();
+
+  async function getZkProof(forceUpdate = false) {
+    const decodedJwt: LoginResponse = jwt_decode(jwtEncoded!) as LoginResponse;
+    const { userKeyData, ephemeralKeyPair } = getEphemeralKeyPair();
+
+    // Modifed Key Pair generation and retrieving //
+    const keyPair = getEphemeralKeyPair();
+
+    const zkpPayload: ZKPPayload = {
+      jwt: jwtEncoded!,
+      extendedEphemeralPublicKey: getExtendedEphemeralPublicKey(
+        keyPair.ephemeralKeyPair.getPublicKey()
+      ),
+      jwtRandomness: userKeyData.randomness,
+      maxEpoch: userKeyData.maxEpoch,
+      salt: userSalt!,
+      keyClaimName: "sub",
+    };
+    const ZKPRequest: ZKPRequest = {
+      zkpPayload,
+      forceUpdate,
+    };
+    console.log("about to post zkpPayload = ", ZKPRequest);
+
+    const proofResponse = await axios.post("/api/zkp", ZKPRequest);
+
+    if (!proofResponse?.data?.zkp) {
+      console.log(
+        "Error getting Zero Knowledge Proof. Please check that Prover Service is running."
+      );
+      return;
+    }
+    console.log("zkp response = ", proofResponse.data.zkp);
+
+    setZkProof(proofResponse.data.zkp);
+  }
+
+  useEffect(() => {
+    executeTransactionWithZKP();
+  }, [zkProof])
+
+  function getEphemeralKeyPair() {
+    const userKeyData = JSON.parse(
+      localStorage.getItem("userKeyData")!
+    );
+    let ephemeralKeyPairArray = decodeSuiPrivateKey(
+      userKeyData.ephemeralPrivateKey
+    );
+    const ephemeralKeyPair = Ed25519Keypair.fromSecretKey(
+      ephemeralKeyPairArray.secretKey
+    );
+    return { userKeyData, ephemeralKeyPair };
+  }
+
+  useEffect(() => {
+
+    const jwtEncodedsave = localStorage.getItem('id_token');
+    setJwtEncoded(jwtEncodedsave!);
+    loadRequiredData(jwtEncodedsave!);
+
+  }, []);
+
+  async function loadRequiredData(encodedJwt: string) {
+    //Decoding JWT to get useful Info
+    const decodedJwt: LoginResponse = (await jwt_decode(
+      encodedJwt!
+    )) as LoginResponse;
+
+    const getSaltRequest = {
+      subject: decodedJwt.sub,
+      jwt: jwtEncoded
+  }
+
+    const response = await axios.post("/api/salt", getSaltRequest);
+
+    const userSalt = response.data.salt;
+    if (!userSalt) {
+      return;
+    }
+    const address = jwtToAddress(encodedJwt!, BigInt(userSalt!));
+
+    setUserAddress(address);
+    setUserSalt(userSalt!);
+
+    console.log("All required data loaded. ZK Address =", address);
+  }
+
+  async function executeTransactionWithZKP() {
+    
+    const decodedJwt: LoginResponse = jwt_decode(jwtEncoded!) as LoginResponse;
+    const { userKeyData, ephemeralKeyPair } = getEphemeralKeyPair();
+    const partialZkSignature = zkProof;
+
+    if (!partialZkSignature || !ephemeralKeyPair || !userKeyData) {
+      console.log("Transaction cannot proceed. Missing critical data.");
+      return;
+    }
+
+    const txb = new TransactionBlock();
+
+    const packageObjectId = "0x486a3e34613b3de56265f0ff9dc9a25e334aadc0c2d0cabf720f57d01af52a6f";
+
+    //Just a simple Demo call to create a little NFT weapon :p
+    txb.moveCall({
+      // target: `${envmintfucn}`, //demo package published on testnet
+      target: `${packageObjectId}::mynft::mint`,
+      arguments: [
+        txb.pure("name"),        // Name argument
+        txb.pure("description"), // Description argument
+        txb.pure("url"), 
+      ],
+    });
+    txb.setSender(userAddress!);
+
+    const signatureWithBytes = await txb.sign({
+      client: suiClient,
+      signer: ephemeralKeyPair,
+    });
+
+    console.log("Got SignatureWithBytes = ", signatureWithBytes);
+    console.log("maxEpoch = ", userKeyData.maxEpoch);
+    console.log("userSignature = ", signatureWithBytes.signature);
+
+    const addressSeed = genAddressSeed(
+      BigInt(userSalt!),
+      "sub",
+      decodedJwt.sub,
+      decodedJwt.aud
+    );
+
+    const zkSignature: SerializedSignature = getZkLoginSignature({
+      inputs: {
+        ...partialZkSignature,
+        addressSeed: addressSeed.toString(),
+      },
+      maxEpoch: userKeyData.maxEpoch,
+      userSignature: signatureWithBytes.signature,
+    });
+
+    suiClient
+      .executeTransactionBlock({
+        transactionBlock: signatureWithBytes.bytes,
+        signature: zkSignature,
+        options: {
+          showEffects: true,
+        },
+      })
+      .then((response) => {
+        if (response.effects?.status.status == "success") {
+          console.log("Transaction executed! Digest = ", response.digest);
+          setTxDigest(response.digest);
+        } else {
+          console.log(
+            "Transaction failed! reason = ",
+            response.effects?.status
+          );
+        }
+      })
+      .catch((error) => {
+        console.log("Error During Tx Execution. Details: ", error);
+        if (error.toString().includes("Signature is not valid")) {
+          console.log(
+            "Signature is not valid. Please generate a new one by clicking on 'Get new ZK Proof'"
+          );
+        }
+      });
+  }
+
   return (
     <>
     <div className="flex gap-4">
@@ -341,6 +551,8 @@ const getRandomNumber = async (): Promise<number> => {
             </div> */}
           </div>
         </div>
+
+        <button onClick={() => getZkProof(true)}>Initialize game</button>
       </div>
       </div>
 
