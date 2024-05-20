@@ -332,7 +332,7 @@ const getRandomNumber = async (): Promise<number> => {
     if (!userSalt) {
       return;
     }
-    const address = jwtToAddress(encodedJwt!, BigInt(userSalt!));
+    const address = jwtToAddress(encodedJwt!, window.BigInt(userSalt!));
 
     setUserAddress(address);
     setUserSalt(userSalt!);
@@ -377,7 +377,7 @@ const getRandomNumber = async (): Promise<number> => {
     console.log("userSignature = ", signatureWithBytes.signature);
 
     const addressSeed = genAddressSeed(
-      BigInt(userSalt!),
+      window.BigInt(userSalt!),
       "sub",
       decodedJwt.sub,
       decodedJwt.aud
