@@ -353,12 +353,12 @@ const getRandomNumber = async (): Promise<number> => {
 
     const txb = new TransactionBlock();
 
-    const packageObjectId = "0x6c8c0bb5fbee9f0d91510d54f2e8b07e1a278da19ecddf65b17e3da48d0f8c97";
+    const packageObjectId = "0x4704f9ba336dfa0f2c56f56d1dedd72b2f103ff1fd93e45e9f13d4eb78323b22";
 
     //Just a simple Demo call to create a little NFT weapon :p
     txb.moveCall({
       // target: `${envmintfucn}`, //demo package published on testnet
-      target: `${packageObjectId}::Snl::Initialize_game`,
+      target: `${packageObjectId}::snl::initialize_game`,
       arguments: [
         txb.pure("name"),        // Name argument
         txb.pure("description"), // Description argument
