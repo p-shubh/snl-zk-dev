@@ -360,8 +360,8 @@ const getRandomNumber = async (): Promise<number> => {
       // target: `${envmintfucn}`, //demo package published on testnet
       target: `${packageObjectId}::snl::initialize_game`,
       arguments: [
-        txb.pure("name"),        // Name argument
-        txb.pure("description"), // Description argument
+        txb.pure("namedevsi"),        // Name argument
+        txb.pure("descriptiondevsi"), // Description argument
         // txb.pure("url"), 
       ],
     });
@@ -413,12 +413,9 @@ const getRandomNumber = async (): Promise<number> => {
           const dynamicDigest = response.digest;
           console.log("dynamic", dynamicDigest);
 
-          let cursor = {
-            txDigest: `6BYfTYwzo1wsxn1VFWe36MZ6HZyDN5B8nFSKP2p4Y9uZ`,
-            eventSeq: '0',
-          }
+          let cursor = null;
 
-          console.log("cursor", cursor, cursor2, typeof(cursor.txDigest), typeof(cursor2.txDigest));
+          // console.log("cursor", cursor, cursor2, typeof(cursor.txDigest), typeof(cursor2.txDigest));
 
           // const client = new suiClient({ url: 'https://rpc.testnet.sui.io:443' });
 
@@ -453,6 +450,35 @@ const getRandomNumber = async (): Promise<number> => {
           );
         }
       });
+  }
+
+  const queryevents = async() => {
+    let cursor = null;
+    let hasNextPage = false;
+
+    do {
+      const res:any = await suiClient.queryEvents({
+                query: {
+                    MoveModule: {
+                        module: `snl`,
+                        package: '0x4704f9ba336dfa0f2c56f56d1dedd72b2f103ff1fd93e45e9f13d4eb78323b22',
+                    },
+                },
+                limit: 50,
+                order: "ascending",
+                cursor,
+            });
+
+            cursor = res.nextCursor;
+    hasNextPage = res.hasNextPage;
+
+    console.log(
+      res.data.length,
+      res.data.map((d:any) => d.parsedJson),
+      res.nextCursor,
+      res.hasNextPage,
+    );
+  } while (hasNextPage);
   }
 
   return (
@@ -575,6 +601,8 @@ const getRandomNumber = async (): Promise<number> => {
         </div>
 
         <button onClick={() => getZkProof(true)}>Initialize game</button>
+
+        <button onClick={queryevents}>Query</button>
       </div>
       </div>
 
