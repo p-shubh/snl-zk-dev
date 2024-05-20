@@ -360,8 +360,8 @@ const getRandomNumber = async (): Promise<number> => {
       // target: `${envmintfucn}`, //demo package published on testnet
       target: `${packageObjectId}::snl::initialize_game`,
       arguments: [
-        txb.pure("namedevsi"),        // Name argument
-        txb.pure("descriptiondevsi"), // Description argument
+        txb.pure("mygame"),        // Name argument
+        txb.pure("bvklb odjfoiv askhjvlk"), // Description argument
         // txb.pure("url"), 
       ],
     });
@@ -405,35 +405,7 @@ const getRandomNumber = async (): Promise<number> => {
           console.log("Transaction executed! Digest = ", response.digest);
           setTxDigest(response.digest);
 
-          const cursor2 = {
-            txDigest: ``,
-            eventSeq: '0',
-          }
-
-          const dynamicDigest = response.digest;
-          console.log("dynamic", dynamicDigest);
-
-          let cursor = null;
-
-          // console.log("cursor", cursor, cursor2, typeof(cursor.txDigest), typeof(cursor2.txDigest));
-
-          // const client = new suiClient({ url: 'https://rpc.testnet.sui.io:443' });
-
-          // console.log("client", client);
-
-              await suiClient.queryEvents({
-                query: {
-                    MoveModule: {
-                        module: `snl`,
-                        package: '0x4704f9ba336dfa0f2c56f56d1dedd72b2f103ff1fd93e45e9f13d4eb78323b22',
-                    },
-                },
-                limit: 50,
-                order: "ascending",
-                cursor,
-            }).then(({ data }) => {
-              console.log("query data", data[0]?.parsedJson, cursor);
-            })
+          queryevents();
 
         } else {
           console.log(
@@ -455,6 +427,7 @@ const getRandomNumber = async (): Promise<number> => {
   const queryevents = async() => {
     let cursor = null;
     let hasNextPage = false;
+    let allParsedJsonData: any[] = [];
 
     do {
       const res:any = await suiClient.queryEvents({
@@ -478,7 +451,15 @@ const getRandomNumber = async (): Promise<number> => {
       res.nextCursor,
       res.hasNextPage,
     );
+    
+    allParsedJsonData = allParsedJsonData.concat(res.data.map((d:any) => d.parsedJson));
+
   } while (hasNextPage);
+
+   // Log the absolute last parsedJson data entry
+   const lastParsedJson = allParsedJsonData.length > 0 ? allParsedJsonData[allParsedJsonData.length - 1] : null;
+   console.log(lastParsedJson);
+
   }
 
   return (
