@@ -400,10 +400,44 @@ const getRandomNumber = async (): Promise<number> => {
           showEffects: true,
         },
       })
-      .then((response) => {
+      .then(async(response) => {
         if (response.effects?.status.status == "success") {
           console.log("Transaction executed! Digest = ", response.digest);
           setTxDigest(response.digest);
+
+          const cursor2 = {
+            txDigest: ``,
+            eventSeq: '0',
+          }
+
+          const dynamicDigest = response.digest;
+          console.log("dynamic", dynamicDigest);
+
+          let cursor = {
+            txDigest: `6BYfTYwzo1wsxn1VFWe36MZ6HZyDN5B8nFSKP2p4Y9uZ`,
+            eventSeq: '0',
+          }
+
+          console.log("cursor", cursor, cursor2, typeof(cursor.txDigest), typeof(cursor2.txDigest));
+
+          // const client = new suiClient({ url: 'https://rpc.testnet.sui.io:443' });
+
+          // console.log("client", client);
+
+              await suiClient.queryEvents({
+                query: {
+                    MoveModule: {
+                        module: `snl`,
+                        package: '0x4704f9ba336dfa0f2c56f56d1dedd72b2f103ff1fd93e45e9f13d4eb78323b22',
+                    },
+                },
+                limit: 50,
+                order: "ascending",
+                cursor,
+            }).then(({ data }) => {
+              console.log("query data", data[0]?.parsedJson, cursor);
+            })
+
         } else {
           console.log(
             "Transaction failed! reason = ",
