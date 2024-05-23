@@ -7,6 +7,7 @@ const GameCard = ({ game }) => {
   const starttime = game.startTimestamp;
   const gamestartTime = new Date(parseInt(starttime, 10));
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(gamestartTime));
+  const [ipfsdata, setIpfsData] = useState(null);
 
   useEffect(() => {
     // Update the countdown every second
@@ -43,14 +44,32 @@ const GameCard = ({ game }) => {
     return timeLeft;
   }
 
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const urlhash = game?.content.fields.url.slice(7)
+        console.log("urlhash", urlhash);
+        const data = await fetch(`https://nftstorage.link/ipfs/${urlhash}`); // Replace with your IPFS hash
+        const ipfsdata = await data.json();
+        setIpfsData(ipfsdata);
+        console.log("ipfs data", ipfsdata)
+      } catch (err) {
+        console.log('Failed to fetch data from IPFS');
+      }
+    };
+
+    fetchData();
+  }, [game]);
+
   return (
     <Link href={`/games/snl/${game?.objectId}`} className="z-10">
       <div className="border text-black rounded-2xl mt-10 h-full" style={{backgroundColor:'#CAF4FF'}}>
         <div className="w-full">
-          {game?.picture ? (<img
+          {ipfsdata?.picture ? (<img
             alt="alt"
             src={`${'https://nftstorage.link/ipfs'}/${removePrefix(
-              game?.coverImage
+              ipfsdata?.coverImage
             )}`}
             className="rounded-t-2xl"
             style={{ height: '200px', width: '400px' }}
@@ -66,10 +85,10 @@ const GameCard = ({ game }) => {
         <div>
         <div className="flex justify-between">
           <div className="pl-4 -mt-12">
-            { game?.picture ? (<img
+            { ipfsdata?.picture ? (<img
               alt="alt"
               src={`${'https://nftstorage.link/ipfs'}/${removePrefix(
-                game?.picture
+                ipfsdata?.picture
               )}`}
               className="rounded-full border border-black"
               width="100"
@@ -89,10 +108,10 @@ const GameCard = ({ game }) => {
           <div className="m-4">
             <div className="flex justify-between font-bold">
               <h5>
-                {game?.content.fields.name} ({game?.symbol})
+                {game?.content.fields.name} ({ipfsdata?.symbol})
               </h5>
             </div>
-            <p className="mt-2">{game?.description}</p>
+            <p className="mt-2">{ipfsdata?.description}</p>
             <div className="mt-2">
               {timeLeft.total > 0 ? (
                 <p className="">
