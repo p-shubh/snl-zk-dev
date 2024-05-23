@@ -57,7 +57,7 @@ type AccountData = {
     aud: string;
     maxEpoch: number;
 }
-const GameBoard = () => {
+const GameBoard = ({ gameData } :any) => {
   const [isLoadingGame, setIsLoadingGame] = useState<boolean>(true);
   const [dieNumber, setDieNumber] = useState<number>(0);
   const [playerPosition, setPlayerPosition] = useState<number>(0);
@@ -76,6 +76,8 @@ const GameBoard = () => {
   const [ladderCount, setLadderCount] = useState<number>(0);
 
   const [dicemoving, setdicemoving] = useState<boolean>(false);
+
+  const [ipfsGameData, setIpfsGameData] = useState(gameContent);
 
   // State for displaying QuestionModal
   const [questionModalVisible, setQuestionModalVisible] =
@@ -176,7 +178,7 @@ const getRandomNumber = async (): Promise<number> => {
         : -1;
 
       if (eventIndex !== -1) {
-        const eventContent = gameContent.find(
+        const eventContent = ipfsGameData.find(
           (cell) =>
             cell.id ===
             (isLadderStart
@@ -209,7 +211,7 @@ const getRandomNumber = async (): Promise<number> => {
         setQuestionModalVisible(true);
       } else {
         // Check if the player landed on a cell with quiz information
-        const currentCell = gameContent.find(
+        const currentCell = ipfsGameData.find(
           (cell) => cell.id === nextPosition
         );
         if (
@@ -421,13 +423,34 @@ async function fetchBalances(accounts: AccountData[]) {
 
   }
 
+
+  // --------------------------------------------------------- get dynamic board data ----------------------------------------
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const urlhash = gameData;
+        console.log("urlhash", urlhash);
+        const data = await fetch(`https://nftstorage.link/ipfs/${urlhash}`); // Replace with your IPFS hash
+        const ipfsdata = await data.json();
+        setIpfsGameData(ipfsdata);
+        console.log("ipfs data", ipfsdata)
+      } catch (err) {
+        console.log('Failed to fetch data from IPFS');
+      }
+    };
+
+    fetchData();
+  }, []);
+
+
   return (
     <>
     <div className="flex gap-4">
       <div className="flex justify-center items-stretch gap-4 backdrop-blur-2xl rounded-3xl py-10 pl-10">
         <div className="bg-cover overflow-hidden" style={{backgroundImage:`url("/board_game.png")`}}>
           <div className="grid grid-cols-9 grid-rows-8">
-            {gameContent
+            {ipfsGameData
               .slice()
               .reverse()
               .map(({ id, term, definition }) => (

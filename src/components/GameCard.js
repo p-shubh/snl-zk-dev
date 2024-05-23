@@ -63,7 +63,7 @@ const GameCard = ({ game }) => {
   }, [game]);
 
   return (
-    <Link href={`/games/snl/${game?.objectId}`} className="z-10">
+    <Link href={`/games/snl/${encodeURIComponent(game?.objectId)}?gameData=${encodeURIComponent(ipfsdata?.gameData.slice(7))}`} className="z-10">
       <div className="border text-black rounded-2xl mt-10 h-full" style={{backgroundColor:'#CAF4FF'}}>
         <div className="w-full">
           {ipfsdata?.picture ? (<img

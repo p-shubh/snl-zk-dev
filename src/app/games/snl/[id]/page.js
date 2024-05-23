@@ -6,11 +6,15 @@ import Cookies from "js-cookie";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import GameBoard from '@/components/Board';
+import { useSearchParams } from 'next/navigation';
 const envcollectionid = "0xdb814ad6dcacad6d1e1caa459b2363047fecc37cd5cdd848d0e3775a65e54792";
 const graphqlaptos = "https://indexer-randomnet.hasura.app/v1/graphql";
 
 export default function Bingo({ params }) {
   const id = params?.id;
+
+  const searchParams = useSearchParams();
+  const gameData = searchParams.get('gameData')
 
   const [token, settoken] = useState("");
   const [loading, setLoading] = useState(false);
@@ -67,7 +71,7 @@ export default function Bingo({ params }) {
       style={{ backgroundImage: 'url("/bggame.png")', backgroundSize: "cover" }}
     >
       <div className="z-10">
-        <GameBoard />
+        <GameBoard gameData={gameData}/>
     </div>
 
     {loading && (
