@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
+
 import { gameContent } from '@/lib/GameData';
 import Button from './Button';
 import { IoIosEye } from 'react-icons/io';
@@ -23,17 +24,39 @@ import {
   jwtToAddress,
   getExtendedEphemeralPublicKey,
 } from "@mysten/zklogin";
-import { useSui } from "../components/hooks/useSui";
-import { ZkLoginSignatureInputs } from "@mysten/sui.js/dist/cjs/zklogin/bcs";
-import {
-  GetSaltRequest,
-  LoginResponse,
-  UserKeyData,
-  ZKPPayload,
-  ZKPRequest,
-} from "../components/types/UsefulTypes";
-import axios from "axios";
 
+import { ZkLoginSignatureInputs } from "@mysten/sui.js/dist/cjs/zklogin/bcs";
+
+import axios from "axios";
+import { NetworkName, makeExplorerUrl, requestSuiFromFaucet, shortenSuiAddress } from '@polymedia/suits';
+import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
+
+
+
+const setupDataKey = 'zklogin-demo.setup';
+const accountDataKey = 'zklogin-demo.accounts';
+
+/* Types */
+
+type OpenIdProvider = 'Google' | 'Twitch' | 'Facebook';
+
+type SetupData = {
+    provider: OpenIdProvider;
+    maxEpoch: number;
+    randomness: string;
+    ephemeralPrivateKey: string;
+}
+
+type AccountData = {
+    provider: OpenIdProvider;
+    userAddr: string;
+    zkProofs: any;
+    ephemeralPrivateKey: string;
+    userSalt: string;
+    sub: string;
+    aud: string;
+    maxEpoch: number;
+}
 const GameBoard = () => {
   const [isLoadingGame, setIsLoadingGame] = useState<boolean>(true);
   const [dieNumber, setDieNumber] = useState<number>(0);
@@ -66,13 +89,16 @@ const GameBoard = () => {
 
   const address = Cookies.get("wallet");
 
+
+
+
   // setting api key for fetching
   const settings = {
     apiKey: '',
     network: Network.ETH_SEPOLIA,
   };
 
-  console.log(address);
+  console.log("address",address);
   const alchemy = new Alchemy(settings);
 
   const delay = (ms:any) => new Promise(resolve => setTimeout(resolve, ms));
@@ -245,185 +271,118 @@ const getRandomNumber = async (): Promise<number> => {
   const blurbackground = {
     backgroundImage: 'linear-gradient(to bottom, #7AB2B2, #4D869C)',
   }
+// -------------------------------------------------------------------------------------------------------------------------------------
+  const NETWORK: NetworkName = 'devnet';
+const MAX_EPOCH = 2; // keep ephemeral keys active for this many Sui epochs from now (1 epoch ~= 24h)
+const accounts = useRef<AccountData[]>(loadAccounts()); // useRef() instead of useState() because of setInterval()
+const [balances, setBalances] = useState<Map<string, number>>(new Map()); // Map<Sui address, SUI balance>
+const [modalContent, setModalContent] = useState<string>('');
+const suiClient = new SuiClient({
+    url: getFullnodeUrl(NETWORK),
+});
 
-  const [zkProof, setZkProof] = useState<ZkLoginSignatureInputs | null>(null);
-  const [jwtEncoded, setJwtEncoded] = useState<string | null>(null);
-  const [userSalt, setUserSalt] = useState<string | null>(null);
-  const [txDigest, setTxDigest] = useState<string | null>(null);
-  const [userAddress, setUserAddress] = useState<string | null>(null);
+// console.log(accounts)
+async function sendTransaction(account: AccountData) {
+  try {
+    setModalContent('🚀 Sending transaction...');
+    console.log('[sendTransaction] Starting transaction');
 
-  const { suiClient } = useSui();
-
-  async function getZkProof(forceUpdate = false) {
-    const decodedJwt: LoginResponse = jwt_decode(jwtEncoded!) as LoginResponse;
-    const { userKeyData, ephemeralKeyPair } = getEphemeralKeyPair();
-
-    // Modifed Key Pair generation and retrieving //
-    const keyPair = getEphemeralKeyPair();
-
-    const zkpPayload: ZKPPayload = {
-      jwt: jwtEncoded!,
-      extendedEphemeralPublicKey: getExtendedEphemeralPublicKey(
-        keyPair.ephemeralKeyPair.getPublicKey()
-      ),
-      jwtRandomness: userKeyData.randomness,
-      maxEpoch: userKeyData.maxEpoch,
-      salt: userSalt!,
-      keyClaimName: "sub",
-    };
-    const ZKPRequest: ZKPRequest = {
-      zkpPayload,
-      forceUpdate,
-    };
-    console.log("about to post zkpPayload = ", ZKPRequest);
-
-    const proofResponse = await axios.post("/api/zkp", ZKPRequest);
-
-    if (!proofResponse?.data?.zkp) {
-      console.log(
-        "Error getting Zero Knowledge Proof. Please check that Prover Service is running."
-      );
-      return;
-    }
-    console.log("zkp response = ", proofResponse.data.zkp);
-
-    setZkProof(proofResponse.data.zkp);
-  }
-
-  useEffect(() => {
-    executeTransactionWithZKP();
-  }, [zkProof])
-
-  function getEphemeralKeyPair() {
-    const userKeyData = JSON.parse(
-      localStorage.getItem("userKeyData")!
-    );
-    let ephemeralKeyPairArray = decodeSuiPrivateKey(
-      userKeyData.ephemeralPrivateKey
-    );
-    const ephemeralKeyPair = Ed25519Keypair.fromSecretKey(
-      ephemeralKeyPairArray.secretKey
-    );
-    return { userKeyData, ephemeralKeyPair };
-  }
-
-  useEffect(() => {
-
-    const jwtEncodedsave = localStorage.getItem('id_token');
-    setJwtEncoded(jwtEncodedsave!);
-    loadRequiredData(jwtEncodedsave!);
-
-  }, []);
-
-  async function loadRequiredData(encodedJwt: string) {
-    //Decoding JWT to get useful Info
-    const decodedJwt: LoginResponse = (await jwt_decode(
-      encodedJwt!
-    )) as LoginResponse;
-
-    const getSaltRequest = {
-      subject: decodedJwt.sub,
-      jwt: jwtEncoded
-  }
-
-    const response = await axios.post("/api/salt", getSaltRequest);
-
-    const userSalt = response.data.salt;
-    if (!userSalt) {
-      return;
-    }
-    const address = jwtToAddress(encodedJwt!, window.BigInt(userSalt!));
-
-    setUserAddress(address);
-    setUserSalt(userSalt!);
-
-    console.log("All required data loaded. ZK Address =", address);
-  }
-
-  async function executeTransactionWithZKP() {
-    
-    const decodedJwt: LoginResponse = jwt_decode(jwtEncoded!) as LoginResponse;
-    const { userKeyData, ephemeralKeyPair } = getEphemeralKeyPair();
-    const partialZkSignature = zkProof;
-
-    if (!partialZkSignature || !ephemeralKeyPair || !userKeyData) {
-      console.log("Transaction cannot proceed. Missing critical data.");
-      return;
-    }
-
+    // Sign the transaction bytes with the ephemeral private key
     const txb = new TransactionBlock();
-
-    const packageObjectId = "0x4704f9ba336dfa0f2c56f56d1dedd72b2f103ff1fd93e45e9f13d4eb78323b22";
-
-    //Just a simple Demo call to create a little NFT weapon :p
+    const packageObjectId = "0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f";
     txb.moveCall({
-      // target: `${envmintfucn}`, //demo package published on testnet
       target: `${packageObjectId}::snl::initialize_game`,
       arguments: [
         txb.pure("mygame"),        // Name argument
         txb.pure("bvklb odjfoiv askhjvlk"), // Description argument
-        // txb.pure("url"), 
       ],
     });
-    txb.setSender(userAddress!);
 
-    const signatureWithBytes = await txb.sign({
+    txb.setSender(accounts.current[0].userAddr);
+    console.log('[sendTransaction] Account address:', accounts.current[0].userAddr);
+
+    const ephemeralKeyPair = keypairFromSecretKey(account.ephemeralPrivateKey);
+    const { bytes, signature: userSignature } = await txb.sign({
       client: suiClient,
       signer: ephemeralKeyPair,
     });
 
-    console.log("Got SignatureWithBytes = ", signatureWithBytes);
-    console.log("maxEpoch = ", userKeyData.maxEpoch);
-    console.log("userSignature = ", signatureWithBytes.signature);
+    console.log('[sendTransaction] Transaction signed:', { bytes, userSignature });
 
+    // Generate an address seed by combining userSalt, sub (subject ID), and aud (audience)
     const addressSeed = genAddressSeed(
-      window.BigInt(userSalt!),
-      "sub",
-      decodedJwt.sub,
-      decodedJwt.aud
-    );
+      window.BigInt(account.userSalt),
+      'sub',
+      account.sub,
+      account.aud,
+    ).toString();
 
-    const zkSignature: SerializedSignature = getZkLoginSignature({
+    console.log('[sendTransaction] Address seed generated:', addressSeed);
+
+    // Serialize the zkLogin signature by combining the ZK proof (inputs), the maxEpoch,
+    // and the ephemeral signature (userSignature)
+    const zkLoginSignature: SerializedSignature = getZkLoginSignature({
       inputs: {
-        ...partialZkSignature,
-        addressSeed: addressSeed.toString(),
+        ...account.zkProofs,
+        addressSeed,
       },
-      maxEpoch: userKeyData.maxEpoch,
-      userSignature: signatureWithBytes.signature,
+      maxEpoch: account.maxEpoch,
+      userSignature,
     });
 
-    suiClient
-      .executeTransactionBlock({
-        transactionBlock: signatureWithBytes.bytes,
-        signature: zkSignature,
-        options: {
-          showEffects: true,
-        },
-      })
-      .then(async(response) => {
-        if (response.effects?.status.status == "success") {
-          console.log("Transaction executed! Digest = ", response.digest);
-          setTxDigest(response.digest);
+    console.log('[sendTransaction] ZK Login signature created:', zkLoginSignature);
 
-          queryevents();
+    // Execute the transaction
+    const result = await suiClient.executeTransactionBlock({
+      transactionBlock: bytes,
+      signature: zkLoginSignature,
+      options: {
+        showEffects: true,
+      },
+    });
 
-        } else {
-          console.log(
-            "Transaction failed! reason = ",
-            response.effects?.status
-          );
-        }
-      })
-      .catch((error) => {
-        console.log("Error During Tx Execution. Details: ", error);
-        if (error.toString().includes("Signature is not valid")) {
-          console.log(
-            "Signature is not valid. Please generate a new one by clicking on 'Get new ZK Proof'"
-          );
-        }
-      });
+    console.debug('[sendTransaction] executeTransactionBlock response:', result);
+
+    await fetchBalances([account]);
+  } catch (error) {
+    console.warn('[sendTransaction] executeTransactionBlock failed:', error);
+  } finally {
+    setModalContent('');
   }
+}
 
+function keypairFromSecretKey(privateKeyBase64: string): Ed25519Keypair {
+  const keyPair = decodeSuiPrivateKey(privateKeyBase64);
+  return Ed25519Keypair.fromSecretKey(keyPair.secretKey);
+}
+function loadAccounts(): AccountData[] {
+  const dataRaw = sessionStorage.getItem(accountDataKey);
+  if (!dataRaw) {
+      return [];
+  }
+  const data: AccountData[] = JSON.parse(dataRaw);
+  return data;
+}
+async function fetchBalances(accounts: AccountData[]) {
+  if (accounts.length == 0) {
+      return;
+  }
+  const newBalances = new Map<string, number>();
+  for (const account of accounts) {
+      const suiBalance = await suiClient.getBalance({
+          owner: account.userAddr,
+          coinType: '0x2::sui::SUI',
+      });
+      newBalances.set(
+          account.userAddr,
+          +suiBalance.totalBalance/1_000_000_000
+      );
+  }
+  setBalances(prevBalances =>
+      new Map([...prevBalances, ...newBalances])
+  );
+}
+// ---------------------------------------------------------------------------------------------------------------------------------
   const queryevents = async() => {
     let cursor = null;
     let hasNextPage = false;
@@ -434,7 +393,7 @@ const getRandomNumber = async (): Promise<number> => {
                 query: {
                     MoveModule: {
                         module: `snl`,
-                        package: '0x4704f9ba336dfa0f2c56f56d1dedd72b2f103ff1fd93e45e9f13d4eb78323b22',
+                        package: '0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f',
                     },
                 },
                 limit: 50,
@@ -580,8 +539,11 @@ const getRandomNumber = async (): Promise<number> => {
             </div> */}
           </div>
         </div>
+       
+        {accounts.current.map((acct) => (
+    <button key={acct.userAddr} onClick={() => sendTransaction(acct)}>Initialize Game</button>
+))}
 
-        <button onClick={() => getZkProof(true)}>Initialize game</button>
 
         <button onClick={queryevents}>Query</button>
       </div>

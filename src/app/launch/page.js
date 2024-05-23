@@ -77,6 +77,8 @@ export default function Dashboard() {
     }
   }
 
+  
+
   async function uploadcoverImage(e) {
     e.preventDefault();
     try {
