@@ -3,9 +3,10 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Cookies from 'js-cookie';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import axios from "axios";
 import GameCard from '@/components/GameCard';
+import { getFullnodeUrl, SuiClient } from '@mysten/sui.js/client';
 
 export default function Dashboard() {
 
@@ -14,6 +15,19 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [games, setGames] = useState([]);
   const [bgImage, setBgImage] = useState('/snake1.png');
+
+  const accountDataKey = 'zklogin-demo.accounts';
+
+  function loadAccounts(){
+    const dataRaw = sessionStorage.getItem(accountDataKey);
+    if (!dataRaw) {
+        return [];
+    }
+    const data = JSON.parse(dataRaw);
+    return data;
+  }
+
+  const accounts = useRef(loadAccounts());
 
   useEffect(() => {
     const call = () => {
@@ -24,105 +38,141 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
-    setLoading(true);
-    const fetchGames = async () => {
-      if(pagestatus === 'bingo'){
-        try {
-        const config = {
-          headers: {
-            Accept: "application/json, text/plain, */*",
-            "Content-Type": "application/json",
-            // Authorization: `Bearer ${auth}`,
-          },
-        };
-
-        const reviewResults = await axios.get(
-          `https://virtuegateway.myriadflow.com/api/v1.0/game/all`,
-          config
-        );
-        console.log("current",reviewResults);
-        const reviewsData = await reviewResults.data;
-
-        // Filter games based on pagestatus
-      const filteredGames = reviewsData.filter(game => game.type === pagestatus);
-
-      setGames(filteredGames);
-      console.log(filteredGames);
-      } catch (error) {
-        console.error('Error fetching reviews:', error);
-      }
-    }
-    else if(pagestatus === 'memory'){try {
-      const config = {
-        headers: {
-          Accept: "application/json, text/plain, */*",
-          "Content-Type": "application/json",
-          // Authorization: `Bearer ${auth}`,
-        },
-      };
-
-      const reviewResults = await axios.get(
-        `https://virtuegateway.myriadflow.com/api/v1.0/memory/all`,
-        config
-      );
-      console.log("current",reviewResults);
-      const reviewsData = await reviewResults.data;
-
-      // Filter games based on pagestatus
-    const filteredGames = reviewsData.filter(game => game.type === pagestatus);
-
-    setGames(filteredGames);
-    console.log(filteredGames);
-    } catch (error) {
-      console.error('Error fetching reviews:', error);
-    }
-  }
-  else if(pagestatus === 'snl'){
-    try {
-
-      const options = {
-        method: 'GET',
-        headers: {accept: 'application/json', 'x-api-key': process.env.NEXT_PUBLIC_BLOCKVISION_KEY }
-      };
+    const getnft = async() => {
+      setLoading(true);
+      const suiClient = new SuiClient({ url: getFullnodeUrl("devnet") });
+      const objects = await suiClient.getOwnedObjects({ owner: accounts.current[0].userAddr});
+      const widgets = [];
       
-      fetch('https://api.blockvision.org/v2/sui/nft/nftList?objectType=0xf1681f601a1c021a0b4c8c8859d50917308fcbebfd19364c4e856ac670bb8496%3A%3Asuishi%3A%3ASuishi&pageIndex=4&pageSize=20', options)
-        .then(response => response.json())
-        .then(response => console.log("response from blockvision", response))
-        .catch(err => console.error(err));
+      // iterate through all objects owned by address
+      for (let i = 0; i < objects.data.length; i++) {
+        const currentObjectId = objects.data[i].data.objectId;
+      
+        // get object information
+        const objectInfo = await suiClient.getObject({
+          id: currentObjectId,
+          options: { showContent: true },
+        });
+      
+        const packageId = '0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f';
+      
+        if (objectInfo.data.content.type == `${packageId}::snl::SNL_NFT`) {
+          // const widgetObjectId = objectInfo.data.content.fields.id.id;
+          const widgetObjectId = objectInfo.data;
+          console.log("widget spotted:", widgetObjectId);
+          widgets.push(widgetObjectId);
+        }
+      }
+      // setOwnedWidgets(widgets);
+      
+      console.log("widgets:", widgets);
+      setGames(widgets);
+      setLoading(false);
+    }
 
-    const config = {
-      headers: {
-        Accept: "application/json, text/plain, */*",
-        "Content-Type": "application/json",
-        // Authorization: `Bearer ${auth}`,
-      },
-    };
+    getnft();
+  }, [])
 
-    const reviewResults = await axios.get(
-      `https://virtuegateway.myriadflow.com/api/v1.0/snl/all`,
-      config
-    );
-    console.log("current",reviewResults);
-    const reviewsData = await reviewResults.data;
+//   useEffect(() => {
+//     setLoading(true);
+//     const fetchGames = async () => {
+//       if(pagestatus === 'bingo'){
+//         try {
+//         const config = {
+//           headers: {
+//             Accept: "application/json, text/plain, */*",
+//             "Content-Type": "application/json",
+//             // Authorization: `Bearer ${auth}`,
+//           },
+//         };
 
-    // Filter games based on pagestatus
-  const filteredGames = reviewsData.filter(game => game.type === pagestatus);
+//         const reviewResults = await axios.get(
+//           `https://virtuegateway.myriadflow.com/api/v1.0/game/all`,
+//           config
+//         );
+//         console.log("current",reviewResults);
+//         const reviewsData = await reviewResults.data;
 
-  setGames(filteredGames);
-  console.log(filteredGames);
-  } catch (error) {
-    console.error('Error fetching reviews:', error);
-  }
-}
+//         // Filter games based on pagestatus
+//       const filteredGames = reviewsData.filter(game => game.type === pagestatus);
+
+//       setGames(filteredGames);
+//       console.log(filteredGames);
+//       } catch (error) {
+//         console.error('Error fetching reviews:', error);
+//       }
+//     }
+//     else if(pagestatus === 'memory'){try {
+//       const config = {
+//         headers: {
+//           Accept: "application/json, text/plain, */*",
+//           "Content-Type": "application/json",
+//           // Authorization: `Bearer ${auth}`,
+//         },
+//       };
+
+//       const reviewResults = await axios.get(
+//         `https://virtuegateway.myriadflow.com/api/v1.0/memory/all`,
+//         config
+//       );
+//       console.log("current",reviewResults);
+//       const reviewsData = await reviewResults.data;
+
+//       // Filter games based on pagestatus
+//     const filteredGames = reviewsData.filter(game => game.type === pagestatus);
+
+//     setGames(filteredGames);
+//     console.log(filteredGames);
+//     } catch (error) {
+//       console.error('Error fetching reviews:', error);
+//     }
+//   }
+//   else if(pagestatus === 'snl'){
+//     try {
+
+//       const options = {
+//         method: 'GET',
+//         headers: {accept: 'application/json', 'x-api-key': process.env.NEXT_PUBLIC_BLOCKVISION_KEY }
+//       };
+      
+//       fetch('https://api.blockvision.org/v2/sui/nft/nftList?objectType=0xf1681f601a1c021a0b4c8c8859d50917308fcbebfd19364c4e856ac670bb8496%3A%3Asuishi%3A%3ASuishi&pageIndex=4&pageSize=20', options)
+//         .then(response => response.json())
+//         .then(response => console.log("response from blockvision", response))
+//         .catch(err => console.error(err));
+
+//     const config = {
+//       headers: {
+//         Accept: "application/json, text/plain, */*",
+//         "Content-Type": "application/json",
+//         // Authorization: `Bearer ${auth}`,
+//       },
+//     };
+
+//     const reviewResults = await axios.get(
+//       `https://virtuegateway.myriadflow.com/api/v1.0/snl/all`,
+//       config
+//     );
+//     console.log("current",reviewResults);
+//     const reviewsData = await reviewResults.data;
+
+//     // Filter games based on pagestatus
+//   const filteredGames = reviewsData.filter(game => game.type === pagestatus);
+
+//   setGames(filteredGames);
+//   console.log(filteredGames);
+//   } catch (error) {
+//     console.error('Error fetching reviews:', error);
+//   }
+// }
   
-  }
+//   }
 
-    const fetchReviewsData = async () => {
-      await fetchGames();
-    };
+//     const fetchReviewsData = async () => {
+//       await fetchGames();
+//     };
   
-    fetchReviewsData().finally(() => setLoading(false));
-  }, [pagestatus]);
+//     fetchReviewsData().finally(() => setLoading(false));
+//   }, [pagestatus]);
 
   
 

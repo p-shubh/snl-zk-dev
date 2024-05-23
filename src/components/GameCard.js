@@ -44,7 +44,7 @@ const GameCard = ({ game }) => {
   }
 
   return (
-    <Link href={`/games/snl/${game?.gameId}`} className="z-10">
+    <Link href={`/games/snl/${game?.objectId}`} className="z-10">
       <div className="border text-black rounded-2xl mt-10 h-full" style={{backgroundColor:'#CAF4FF'}}>
         <div className="w-full">
           {game?.picture ? (<img
@@ -89,7 +89,7 @@ const GameCard = ({ game }) => {
           <div className="m-4">
             <div className="flex justify-between font-bold">
               <h5>
-                {game?.name} ({game?.symbol})
+                {game?.content.fields.name} ({game?.symbol})
               </h5>
             </div>
             <p className="mt-2">{game?.description}</p>
