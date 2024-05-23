@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Cookies from 'js-cookie';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import DatePicker from 'react-datepicker';
 import { removePrefix } from "../../../modules/Utils/ipfsUtil";
 import { NFTStorage } from "nft.storage";
@@ -11,6 +11,19 @@ const client = new NFTStorage({ token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ
 import 'react-datepicker/dist/react-datepicker.css';
 import { createClient } from "@supabase/supabase-js";
 import { gameContent } from '@/lib/GameData';
+import {
+  genAddressSeed,
+  getZkLoginSignature,
+  jwtToAddress,
+  getExtendedEphemeralPublicKey,
+} from "@mysten/zklogin";
+import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
+import { TransactionBlock } from "@mysten/sui.js/transactions";
+import {
+  SerializedSignature,
+  decodeSuiPrivateKey,
+} from "@mysten/sui.js/cryptography";
+import { Ed25519Keypair } from "@mysten/sui.js/keypairs/ed25519";
 
 export default function Dashboard() {
   const [token, settoken] = useState('');
@@ -36,6 +49,33 @@ export default function Dashboard() {
 
   const [viewhide, setviewhide] = useState(false);
   const [gamedataloading, setgamedataLoading] = useState(false);
+
+  const [ipfsmetahashnft, setipfsmetahashnft] = useState("");
+
+  const accountDataKey = 'zklogin-demo.accounts';
+
+  function keypairFromSecretKey(privateKeyBase64) {
+    const keyPair = decodeSuiPrivateKey(privateKeyBase64);
+    return Ed25519Keypair.fromSecretKey(keyPair.secretKey);
+  }
+
+  function loadAccounts(){
+    const dataRaw = sessionStorage.getItem(accountDataKey);
+    if (!dataRaw) {
+        return [];
+    }
+    const data = JSON.parse(dataRaw);
+    return data;
+  }
+
+  const NETWORK='devnet';
+  const MAX_EPOCH = 2; // keep ephemeral keys active for this many Sui epochs from now (1 epoch ~= 24h)
+  const accounts = useRef(loadAccounts()); // useRef() instead of useState() because of setInterval()
+  const [balances, setBalances] = useState(new Map()); // Map<Sui address, SUI balance>
+  const [modalContent, setModalContent] = useState('');
+  const suiClient = new SuiClient({
+      url: getFullnodeUrl(NETWORK),
+  });
 
   // Function to handle input change
   const handleGenerateTextChange = (event) => {
@@ -128,26 +168,7 @@ export default function Dashboard() {
 
       const { data: selectdata } = await supabase.from("snl_sui").select();
 
-      // const response = await fetch('/api/insertData', {
-      //   method: 'POST'
-      // });
-      // const data = await response.json();
-
       console.log("inseted data", insertedData, selectdata);
-
-      // const mintTransaction = {
-      //   arguments: [gamename, dateAsU64.toString()],
-      //   function:
-      //     "0xb7962020d60bbc67b8ae59d4b0b9f6df72ef26a904ef08cb1585dd620f904c8d::bingo::create_game",
-      //   type: "entry_function_payload",
-      //   type_arguments: [],
-      // };
-
-      // const mintResponse = await window.aptos.signAndSubmitTransaction(
-      //   mintTransaction
-      // );
-
-      // console.log('created game:', gameData);
 
       // Convert state variable to JSON string
       const stateVariableJSON = JSON.stringify(gameData);
@@ -168,26 +189,27 @@ export default function Dashboard() {
           description: description,
           creatorWalletAddress: wallet,
           gameData: ipfsmetahash
-          // type: type,
         };
 
         console.log("snl game data", snlData);
 
-          const response = await fetch(
-          `https://virtuegateway.myriadflow.com/api/v1.0/snl`,
-          {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              // 'Authorization': `Bearer ${auth}`
-            },
-            body: JSON.stringify(snlData),
-          }
-        );
+        const gameNFTdata = JSON.stringify(snlData);
+
+      // Convert JSON string to Blob
+      const blobDatanft = new Blob([gameNFTdata]);
+
+      // Upload blob to IPFS
+      const metaHashnft = await client.storeBlob(blobDatanft);
+
+      const ipfsmetahashnft = `ipfs://${metaHashnft}`;
 
       // console.log("response game post", response);
+      setipfsmetahashnft(ipfsmetahashnft);
 
-      setcreategamedone(true);
+      sendTransaction(accounts.current[0]);
+
+      console.log("game created")
+      // setcreategamedone(true);
       
       // Redirect to a different page after 3 seconds
       // setTimeout(() => {
@@ -199,6 +221,76 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+
+  async function sendTransaction(account) {
+    
+    try {
+      setModalContent('🚀 Sending transaction...');
+      console.log('[sendTransaction] Starting transaction');
+  
+      // Sign the transaction bytes with the ephemeral private key
+      const txb = new TransactionBlock();
+      const packageObjectId = "0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f";
+      txb.moveCall({
+        target: `${packageObjectId}::snl::initialize_game`,
+        arguments: [
+          txb.pure("mygame"),        // Name argument
+          txb.pure("bvklb odjfoiv askhjvlk"), // Description argument
+        ],
+      });
+  
+      txb.setSender(accounts.current[0].userAddr);
+      console.log('[sendTransaction] Account address:', accounts.current[0].userAddr);
+  
+      const ephemeralKeyPair = keypairFromSecretKey(account.ephemeralPrivateKey);
+      const { bytes, signature: userSignature } = await txb.sign({
+        client: suiClient,
+        signer: ephemeralKeyPair,
+      });
+  
+      console.log('[sendTransaction] Transaction signed:', { bytes, userSignature });
+  
+      // Generate an address seed by combining userSalt, sub (subject ID), and aud (audience)
+      const addressSeed = genAddressSeed(
+        window.BigInt(account.userSalt),
+        'sub',
+        account.sub,
+        account.aud,
+      ).toString();
+  
+      console.log('[sendTransaction] Address seed generated:', addressSeed);
+  
+      // Serialize the zkLogin signature by combining the ZK proof (inputs), the maxEpoch,
+      // and the ephemeral signature (userSignature)
+      const zkLoginSignature = getZkLoginSignature({
+        inputs: {
+          ...account.zkProofs,
+          addressSeed,
+        },
+        maxEpoch: account.maxEpoch,
+        userSignature,
+      });
+  
+      console.log('[sendTransaction] ZK Login signature created:', zkLoginSignature);
+  
+      // Execute the transaction
+      const result = await suiClient.executeTransactionBlock({
+        transactionBlock: bytes,
+        signature: zkLoginSignature,
+        options: {
+          showEffects: true,
+        },
+      });
+  
+      console.debug('[sendTransaction] executeTransactionBlock response:', result);
+  
+      await fetchBalances([account]);
+    } catch (error) {
+      console.warn('[sendTransaction] executeTransactionBlock failed:', error);
+    } finally {
+      setModalContent('');
+    }
+  }
 
   // Function to generate half the number of image input boxes
   useEffect(() => {
