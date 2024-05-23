@@ -209,12 +209,12 @@ export default function Dashboard() {
       sendTransaction(accounts.current[0]);
 
       console.log("game created")
-      // setcreategamedone(true);
+      setcreategamedone(true);
       
       // Redirect to a different page after 3 seconds
-      // setTimeout(() => {
-      //   window.location.replace('/explore');
-      // }, 2000);
+      setTimeout(() => {
+        window.location.replace('/explore');
+      }, 2000);
     } catch (error) {
       console.error('Error handling', error);
     } finally {
@@ -234,8 +234,8 @@ export default function Dashboard() {
       txb.moveCall({
         target: `${packageObjectId}::snl::initialize_game`,
         arguments: [
-          txb.pure("mygame"),        // Name argument
-          txb.pure("bvklb odjfoiv askhjvlk"), // Description argument
+          txb.pure(gamename),        // Name argument
+          txb.pure(ipfsmetahashnft), // Description argument
         ],
       });
   
@@ -514,7 +514,7 @@ return parsedContents;
     const allParsedContents = [];
   
     try {
-      for (let count = 0; count < 1; count++) {
+      for (let count = 0; count < 9; count++) {
         const parsedContents = await generateGameContentfromChatgpt();
         if (parsedContents.length > 0) {
 
