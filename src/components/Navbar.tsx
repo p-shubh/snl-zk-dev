@@ -26,7 +26,7 @@ import {
   requestSuiFromFaucet,
   shortenSuiAddress,
 } from '@polymedia/suits';
-import { Modal, isLocalhost } from '@polymedia/webutils';
+
 import { jwtDecode } from 'jwt-decode';
 
 const NETWORK: NetworkName = 'devnet';
@@ -335,7 +335,7 @@ const Navbar = () => {
 
     // Generate an address seed by combining userSalt, sub (subject ID), and aud (audience)
     const addressSeed = genAddressSeed(
-      BigInt(account.userSalt),
+      window.BigInt(account.userSalt),
       'sub',
       account.sub,
       account.aud
@@ -412,36 +412,55 @@ const Navbar = () => {
   /* Session storage */
 
   function saveSetupData(data: SetupData) {
+    if(typeof window !== 'undefined'){
     sessionStorage.setItem(setupDataKey, JSON.stringify(data));
+    }
   }
 
   function loadSetupData(): SetupData | null {
-    const dataRaw = sessionStorage.getItem(setupDataKey);
-    if (!dataRaw) {
-      return null;
+    if (typeof window !== 'undefined') {
+      const dataRaw = sessionStorage.getItem(setupDataKey);
+      if (!dataRaw) {
+        return null;
+      }
+      const data: SetupData = JSON.parse(dataRaw);
+      return data;
     }
-    const data: SetupData = JSON.parse(dataRaw);
-    return data;
+    // Add a return statement here to cover the case when typeof window is undefined
+    return null;
   }
+  
 
   function clearSetupData(): void {
+    if(typeof window !== 'undefined'){
     sessionStorage.removeItem(setupDataKey);
+    }
   }
 
   function saveAccount(account: AccountData): void {
     const newAccounts = [account, ...accounts.current];
+    if(typeof window !== 'undefined'){
     sessionStorage.setItem(accountDataKey, JSON.stringify(newAccounts));
     accounts.current = newAccounts;
     fetchBalances([account]);
+    }
   }
 
   function loadAccounts(): AccountData[] {
-    const dataRaw = sessionStorage.getItem(accountDataKey);
-    if (!dataRaw) {
-      return [];
+    if (typeof window !== 'undefined') {
+        const dataRaw = sessionStorage.getItem(accountDataKey);
+        if (!dataRaw) {
+            return [];
+        }
+        try {
+            const data: AccountData[] = JSON.parse(dataRaw);
+            return data;
+        } catch (error) {
+            console.error('Error parsing account data:', error);
+            return [];
+        }
     }
-    const data: AccountData[] = JSON.parse(dataRaw);
-    return data;
+    return [];
   }
 
   function clearState(): void {
@@ -452,9 +471,7 @@ const Navbar = () => {
 
   /* HTML */
 
-  const openIdProviders: OpenIdProvider[] = isLocalhost()
-    ? ['Google']
-    : ['Google'];
+  const openIdProviders: OpenIdProvider[] = ["Google"];
 
   // --------------------------------------------------- zklogin login check ------------------------------------------------------------
 

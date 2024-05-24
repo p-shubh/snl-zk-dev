@@ -19,12 +19,14 @@ export default function Dashboard() {
   const accountDataKey = 'zklogin-demo.accounts';
 
   function loadAccounts(){
+    if(typeof window !== 'undefined'){
     const dataRaw = sessionStorage.getItem(accountDataKey);
     if (!dataRaw) {
         return [];
     }
     const data = JSON.parse(dataRaw);
     return data;
+  }
   }
 
   const accounts = useRef(loadAccounts());
