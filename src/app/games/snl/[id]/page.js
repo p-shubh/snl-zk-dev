@@ -71,7 +71,7 @@ export default function Bingo({ params }) {
       style={{ backgroundImage: 'url("/bggame.png")', backgroundSize: "cover" }}
     >
       <div className="z-10">
-        <GameBoard gameData={gameData}/>
+        <GameBoard gameData={gameData} objectid={id}/>
     </div>
 
     {loading && (

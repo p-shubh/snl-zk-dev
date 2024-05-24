@@ -57,7 +57,7 @@ type AccountData = {
     aud: string;
     maxEpoch: number;
 }
-const GameBoard = ({ gameData } :any) => {
+const GameBoard = ({ gameData, objectid } :any) => {
   const [isLoadingGame, setIsLoadingGame] = useState<boolean>(true);
   const [dieNumber, setDieNumber] = useState<number>(0);
   const [playerPosition, setPlayerPosition] = useState<number>(0);
@@ -105,11 +105,83 @@ const GameBoard = ({ gameData } :any) => {
 
   const delay = (ms:any) => new Promise(resolve => setTimeout(resolve, ms));
 
-const getRandomNumber = async (): Promise<number> => {
+  async function smartcontractrolldice(account: AccountData) {
+    try {
+      const txb = new TransactionBlock();
+      const packageObjectId = "0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f";
+
+      console.log("object id", objectid);
+
+      txb.moveCall({
+        target: `${packageObjectId}::snl::roll_dice`,
+        arguments: [
+          txb.pure("0x8"),        // Name argument
+          txb.pure(objectid), // Description argument
+        ],
+      });
+  
+      txb.setSender(accounts.current[0].userAddr);
+      console.log('[sendTransaction] Account address:', accounts.current[0].userAddr);
+  
+      const ephemeralKeyPair = keypairFromSecretKey(account.ephemeralPrivateKey);
+      const { bytes, signature: userSignature } = await txb.sign({
+        client: suiClient,
+        signer: ephemeralKeyPair,
+      });
+  
+      console.log('[sendTransaction] Transaction signed:', { bytes, userSignature });
+  
+      // Generate an address seed by combining userSalt, sub (subject ID), and aud (audience)
+      const addressSeed = genAddressSeed(
+        window.BigInt(account.userSalt),
+        'sub',
+        account.sub,
+        account.aud,
+      ).toString();
+  
+      console.log('[sendTransaction] Address seed generated:', addressSeed);
+  
+      // Serialize the zkLogin signature by combining the ZK proof (inputs), the maxEpoch,
+      // and the ephemeral signature (userSignature)
+      const zkLoginSignature: SerializedSignature = getZkLoginSignature({
+        inputs: {
+          ...account.zkProofs,
+          addressSeed,
+        },
+        maxEpoch: account.maxEpoch,
+        userSignature,
+      });
+  
+      console.log('[sendTransaction] ZK Login signature created:', zkLoginSignature);
+  
+      // Execute the transaction
+      const result = await suiClient.executeTransactionBlock({
+        transactionBlock: bytes,
+        signature: zkLoginSignature,
+        options: {
+          showEffects: true,
+        },
+      });
+  
+      console.debug('[sendTransaction] executeTransactionBlock response:', result);
+  
+      await fetchBalances([account]);
+    } catch (error) {
+      console.warn('[sendTransaction] executeTransactionBlock failed:', error);
+    } finally {
+      setModalContent('');
+    }
+  }
+
+const getRandomNumber = async () => {
   setdicemoving(true);
 
-  const randomDecimal = Math.random();
-  const randomNumber = Math.floor(randomDecimal * 6) + 1;
+  await smartcontractrolldice(accounts.current[0]);
+
+  // const randomDecimal = Math.random();
+  // const randomNumber = Math.floor(randomDecimal * 6) + 1;
+
+  const randomNumber = await queryevents();
 
   await delay(2000); // Delay for 2 seconds
 
@@ -201,7 +273,7 @@ const getRandomNumber = async (): Promise<number> => {
             : snakeEndPoints[eventIndex],
           72
         );
-        setPlayerPosition(newPosition);
+        // setPlayerPosition(newPosition);
 
         // Enable rolling dice after encountering a ladder or snake
         setIsMoveDisable(true);
@@ -429,6 +501,7 @@ async function fetchBalances(accounts: AccountData[]) {
    const lastParsedJson = allParsedJsonData.length > 0 ? allParsedJsonData[allParsedJsonData.length - 1] : null;
    console.log(lastParsedJson);
 
+   return lastParsedJson;
   }
 
 
@@ -532,7 +605,9 @@ async function fetchBalances(accounts: AccountData[]) {
                 variant={isRollDisabled || gameWon ? 'inactive' : 'primary'}
                 onClick={async () => {
                   const rollResult = await getRandomNumber();
-                  setDieNumber(rollResult);
+                  console.log("roll result", rollResult);
+                  setDieNumber(rollResult.dice_value);
+                  setPlayerPosition(rollResult.player_position);
                   setIsMoveDisable(false);
                   setIsRollDisable(true);
                 }}
