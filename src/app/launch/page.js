@@ -45,6 +45,8 @@ export default function Dashboard() {
   const [imageInputs, setImageInputs] = useState([]);
   const [imageinputarray, setImageInputArray] = useState([]);
 
+  const [loadingdetails, setloadingdetails] = useState(0);
+
   const [topicName, setTopicName] = useState(""); // State to store the topic name
 
   const [viewhide, setviewhide] = useState(false);
@@ -569,6 +571,7 @@ return parsedContents;
           allParsedContents.push(parsedContents[5]);
           allParsedContents.push(parsedContents[6]);
           allParsedContents.push(parsedContents[7]);
+          setloadingdetails(allParsedContents.length);
           console.log("allParsedContents", allParsedContents);
         }
       }
@@ -1145,6 +1148,8 @@ style={{border: "1px solid #75E2FF", color:'black'}}
             <div className="relative rounded-lg shadow">
             <div className='text-white text-center text-2xl lg:w-1/3 mx-auto'>We are fetching 72 items so please wait 🙂</div>
 
+            <div className='text-white text-center text-2xl lg:w-1/3 mx-auto'>{loadingdetails} items done</div>
+            
               <div className="flex justify-center gap-4">
                 <img
                   src="/dice_loader.gif"
