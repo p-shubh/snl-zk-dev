@@ -208,15 +208,11 @@ export default function Dashboard() {
       // console.log("response game post", response);
       setipfsmetahashnft(ipfsmetahashnft);
 
-      sendTransaction(accounts.current[0]);
+      sendTransaction(accounts.current[0], ipfsmetahashnft);
 
       console.log("game created")
       setcreategamedone(true);
-      
-      // Redirect to a different page after 3 seconds
-      // setTimeout(() => {
-      //   window.location.replace('/explore');
-      // }, 2000);
+    
     } catch (error) {
       console.error('Error handling', error);
     } finally {
@@ -224,7 +220,7 @@ export default function Dashboard() {
     }
   };
 
-  async function sendTransaction(account) {
+  async function sendTransaction(account, ipfsmetahashnfturl) {
     
     try {
       setModalContent('🚀 Sending transaction...');
@@ -237,7 +233,7 @@ export default function Dashboard() {
         target: `${packageObjectId}::snl::initialize_game`,
         arguments: [
           txb.pure(gamename),        // Name argument
-          txb.pure(ipfsmetahashnft), // Description argument
+          txb.pure(ipfsmetahashnfturl), // Description argument
         ],
       });
   
@@ -334,6 +330,10 @@ export default function Dashboard() {
 
     // ----------------------------   send object id in backend api --------------------------------------------------
 
+      // Redirect to a different page after 3 seconds
+      // setTimeout(() => {
+      //   window.location.replace('/explore');
+      // }, 2000);
 
   }
 
