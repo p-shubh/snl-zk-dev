@@ -81,8 +81,11 @@ export default function Home() {
   }
   }
   const accounts = useRef(loadAccounts());
-  console.log(accounts.current[0]?.userAddr)
-  const userAddr = accounts.current[0]?.userAddr;
+  
+  const userAddr = accounts.current?.length
+  console.log(userAddr)
+
+  // console.log('sarvesh',accounts.current[0])
   useEffect(() => {
     setIsAccountDataAvailable(!!userAddr); // Update state based on the presence of userAddr
   }, [userAddr]);
@@ -92,7 +95,7 @@ export default function Home() {
       alert("Please login to access this page.");
     }
   };
-
+  
 
 
   useEffect(() => {
