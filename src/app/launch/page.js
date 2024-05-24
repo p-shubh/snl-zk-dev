@@ -62,6 +62,7 @@ export default function Dashboard() {
   }
 
   function loadAccounts(){
+    if(typeof window !== 'undefined'){
     const dataRaw = sessionStorage.getItem(accountDataKey);
     if (!dataRaw) {
         return [];
@@ -69,11 +70,12 @@ export default function Dashboard() {
     const data = JSON.parse(dataRaw);
     return data;
   }
+  }
 
   const NETWORK='devnet';
   const MAX_EPOCH = 2; // keep ephemeral keys active for this many Sui epochs from now (1 epoch ~= 24h)
   const accounts = useRef(loadAccounts()); // useRef() instead of useState() because of setInterval()
-  const [balances, setBalances] = useState(new Map()); // Map<Sui address, SUI balance>
+  // const [balances, setBalances] = useState(new Map()); // Map<Sui address, SUI balance>
   const [modalContent, setModalContent] = useState('');
   const suiClient = new SuiClient({
       url: getFullnodeUrl(NETWORK),

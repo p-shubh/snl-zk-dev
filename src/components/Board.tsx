@@ -358,12 +358,20 @@ function keypairFromSecretKey(privateKeyBase64: string): Ed25519Keypair {
   return Ed25519Keypair.fromSecretKey(keyPair.secretKey);
 }
 function loadAccounts(): AccountData[] {
-  const dataRaw = sessionStorage.getItem(accountDataKey);
-  if (!dataRaw) {
-      return [];
+  if (typeof window !== 'undefined') {
+      const dataRaw = sessionStorage.getItem(accountDataKey);
+      if (!dataRaw) {
+          return [];
+      }
+      try {
+          const data: AccountData[] = JSON.parse(dataRaw);
+          return data;
+      } catch (error) {
+          console.error('Error parsing account data:', error);
+          return [];
+      }
   }
-  const data: AccountData[] = JSON.parse(dataRaw);
-  return data;
+  return [];
 }
 async function fetchBalances(accounts: AccountData[]) {
   if (accounts.length == 0) {
