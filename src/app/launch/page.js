@@ -212,9 +212,9 @@ export default function Dashboard() {
       setcreategamedone(true);
       
       // Redirect to a different page after 3 seconds
-      setTimeout(() => {
-        window.location.replace('/explore');
-      }, 2000);
+      // setTimeout(() => {
+      //   window.location.replace('/explore');
+      // }, 2000);
     } catch (error) {
       console.error('Error handling', error);
     } finally {
@@ -283,13 +283,56 @@ export default function Dashboard() {
       });
   
       console.debug('[sendTransaction] executeTransactionBlock response:', result);
-  
-      await fetchBalances([account]);
+   
+      await queryevents();
+      // await fetchBalances([account]);
     } catch (error) {
       console.warn('[sendTransaction] executeTransactionBlock failed:', error);
     } finally {
       setModalContent('');
     }
+  }
+
+  const queryevents = async() => {
+    let cursor = null;
+    let hasNextPage = false;
+    let allParsedJsonData = [];
+
+    do {
+      const res = await suiClient.queryEvents({
+                query: {
+                    MoveModule: {
+                        module: `snl`,
+                        package: '0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f',
+                    },
+                },
+                limit: 50,
+                order: "ascending",
+                cursor,
+            });
+
+            cursor = res.nextCursor;
+    hasNextPage = res.hasNextPage;
+
+    console.log(
+      res.data.length,
+      res.data.map((d) => d.parsedJson),
+      res.nextCursor,
+      res.hasNextPage,
+    );
+    
+    allParsedJsonData = allParsedJsonData.concat(res.data.map((d) => d.parsedJson));
+
+  } while (hasNextPage);
+
+   // Log the absolute last parsedJson data entry
+   const lastParsedJson = allParsedJsonData.length > 0 ? allParsedJsonData[allParsedJsonData.length - 1] : null;
+   console.log(lastParsedJson);
+
+
+    // ----------------------------   send object id in backend api --------------------------------------------------
+
+
   }
 
   // Function to generate half the number of image input boxes
