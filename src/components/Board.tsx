@@ -433,7 +433,14 @@ async function fetchBalances(accounts: AccountData[]) {
         console.log("urlhash", urlhash);
         const data = await fetch(`https://nftstorage.link/ipfs/${urlhash}`); // Replace with your IPFS hash
         const ipfsdata = await data.json();
-        setIpfsGameData(ipfsdata);
+
+        // Update the id field to start from 1
+        const updatedData = ipfsdata.map((item:any, index:any) => ({
+          ...item,
+          id: index + 1, // Start id from 1
+        }));
+
+        setIpfsGameData(updatedData);
         console.log("ipfs data", ipfsdata)
       } catch (err) {
         console.log('Failed to fetch data from IPFS');
@@ -509,7 +516,7 @@ async function fetchBalances(accounts: AccountData[]) {
       </div>
 
 
-      <div className="flex justify-center rounded-3xl p-4" style={{backgroundImage:`url("/light_bg_game.png")`}}>
+      <div className="flex justify-center rounded-3xl p-4 w-1/3" style={{backgroundImage:`url("/light_bg_game.png")`}}>
         <div className="flex px-4 h-[3.5rem] w-[22rem] justify-center mt-10 gap-6 rounded-full mx-8" style={{backgroundColor:'#FFFFFFB2'}}>
           <div className="flex w-full items-center justify-between">
             <div>
