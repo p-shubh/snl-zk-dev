@@ -190,6 +190,85 @@ const getRandomNumber = async () => {
   return randomNumber;
 };
 
+async function smartcontractposition(account: AccountData) {
+  try {
+    const txb = new TransactionBlock();
+    const packageObjectId = "0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f";
+
+    console.log("object id", objectid);
+
+    txb.moveCall({
+      target: `${packageObjectId}::snl::player_position`,
+      arguments: [
+        txb.pure(objectid), // Description argument
+      ],
+    });
+
+    txb.setSender(accounts.current[0].userAddr);
+    console.log('[sendTransaction] Account address:', accounts.current[0].userAddr);
+
+    const ephemeralKeyPair = keypairFromSecretKey(account.ephemeralPrivateKey);
+    const { bytes, signature: userSignature } = await txb.sign({
+      client: suiClient,
+      signer: ephemeralKeyPair,
+    });
+
+    console.log('[sendTransaction] Transaction signed:', { bytes, userSignature });
+
+    // Generate an address seed by combining userSalt, sub (subject ID), and aud (audience)
+    const addressSeed = genAddressSeed(
+      window.BigInt(account.userSalt),
+      'sub',
+      account.sub,
+      account.aud,
+    ).toString();
+
+    console.log('[sendTransaction] Address seed generated:', addressSeed);
+
+    // Serialize the zkLogin signature by combining the ZK proof (inputs), the maxEpoch,
+    // and the ephemeral signature (userSignature)
+    const zkLoginSignature: SerializedSignature = getZkLoginSignature({
+      inputs: {
+        ...account.zkProofs,
+        addressSeed,
+      },
+      maxEpoch: account.maxEpoch,
+      userSignature,
+    });
+
+    console.log('[sendTransaction] ZK Login signature created:', zkLoginSignature);
+
+    // Execute the transaction
+    const result = await suiClient.executeTransactionBlock({
+      transactionBlock: bytes,
+      signature: zkLoginSignature,
+      options: {
+        showEffects: true,
+      },
+    });
+
+    console.debug('[sendTransaction] executeTransactionBlock response:', result);
+
+    await fetchBalances([account]);
+  } catch (error) {
+    console.warn('[sendTransaction] executeTransactionBlock failed:', error);
+  } finally {
+    setModalContent('');
+  }
+}
+
+useEffect(() => {
+  const getpositionfromquery = async() => {
+    // const data = await queryevents();
+    await smartcontractposition(accounts.current[0]);
+    const data = await queryevents();
+    setPlayerPosition(data.player_position);
+  }
+
+  getpositionfromquery();
+}, [])
+
+
   const dieNumberToSVG: Record<number, string> = {
     1: 'Dice-1.svg',
     2: 'Dice-2.svg',
