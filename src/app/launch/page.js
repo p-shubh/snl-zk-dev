@@ -680,7 +680,6 @@ return parsedContents;
                                         
               </div>
 
-              <div className="rounded-full h-48 w-48 ring-1 ring-black bg-white w-1/2">
                 {picture ? (
                   <>
                     <img
@@ -694,7 +693,7 @@ return parsedContents;
                     />
                   </>
                 ) : (
-                  <>
+                  <div className="rounded-full h-48 w-48 ring-1 ring-black bg-white w-1/2">
                     <div className="text-black pb-4 text-center pt-16">
                       Picture
                     </div>
@@ -723,9 +722,9 @@ return parsedContents;
                         />
                       </svg>
                     </label>
-                  </>
+                    </div>
                 )}
-              </div>
+              
               </div>
 
               <input
