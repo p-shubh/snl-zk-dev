@@ -462,15 +462,19 @@ const Navbar = () => {
     <div>
       {/* <Modal content={modalContent} /> */}
       {
-        <div
-          className="flex border border-gray-300 px-1 py-1 rounded-lg"
-          style={{ backgroundColor: '#BFCFE7' }}
-        >
+        // <div
+        //   className="flex border border-gray-300 px-1 py-1 rounded-lg"
+        //   style={{ backgroundColor: '#BFCFE7' }}
+        // >
           <div className="flex gap-2">
             
             <div className="text-xs leading-6 text-gray-700 sm:col-span-2 text-black">
               <div>
                 {accounts.current.length > 0 && (
+                   <div
+                   className="flex border border-gray-300 px-1 py-1 rounded-lg"
+                   style={{ backgroundColor: '#BFCFE7' }}
+                 >
                   <div id="accounts" className="section">
                     {accounts.current.map((acct) => {
                       const balance = balances.get(acct.userAddr);
@@ -481,13 +485,13 @@ const Navbar = () => {
                       );
 
                       return (
-                        <div className="account" key={acct.userAddr}>
-                          {/* <div>
-                <label className={`provider ${acct.provider}`}>{acct.provider}</label>
-            </div> */}
+                        <div className="account flex gap-2 text-xs" key={acct.userAddr}>
+
             {avatarUrl && (
               <img src={avatarUrl} alt="Avatar" style={{ width: 40 }} />
             )}
+
+            <div>
                           <div>
                             Address:{' '}
                             <a
@@ -504,25 +508,17 @@ const Navbar = () => {
                               )}
                             </a>
                           </div>
-                          {/* <div>User ID: {acct.sub}</div> */}
+  
                           <div>
                             Balance:{' '}
                             {typeof balance === 'undefined'
                               ? '(loading)'
                               : `${balance} SUI`}
                           </div>
+                          
+                          <div className='flex justify-between'>
                           <button
-                            className={`btn-send ${!balance ? 'disabled' : ''}`}
-                            disabled={!balance}
-                            onClick={() => {
-                              sendTransaction(acct);
-                            }}
-                          >
-                            Send transaction
-                          </button>
-                          {balance === 0 && (
-                            <button
-                              className="btn-faucet"
+                              className="btn-faucet text-green-600 font-bold"
                               onClick={() => {
                                 requestSuiFromFaucet(NETWORK, acct.userAddr);
                                 setModalContent(
@@ -533,44 +529,38 @@ const Navbar = () => {
                                 }, 3000);
                               }}
                             >
-                              Use faucet
+                              Faucet SUI
                             </button>
-                          )}
-                          <hr />
-                          <button
+
+                          <button className='text-red-500 font-bold'
                             onClick={() => {
                               clearState();
                             }}
                           >
                             Log Out
                           </button>
+                          </div>
+                            
+</div>
                         </div>
                       );
                     })}
                   </div>
+                  </div>
                 )}
-              </div>
-              <div className="flex justify-center">
-                {/* <button
-                  type="button"
-                  className="rounded-md bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                  onClick={() => {}}
-                >
-                  Copy
-                </button> */}
               </div>
             </div>
           </div>
 
           
-        </div>
+        // </div>
       }
       {accounts.current.length <= 0 && (
 <div>
       {/* <button onClick={()=>{setloginbox(true)}} className="px-4">Login</button> */}
       {openIdProviders.map((provider) => (
         <button
-          className={`btn-login ${provider}`}
+          className={`btn-login ${provider} flex gap-2 border border-white p-2 rounded-lg`}
           onClick={() => {
             beginZkLogin(provider);
           }}
@@ -601,7 +591,7 @@ const Navbar = () => {
               d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
             ></path>
           </svg>
-          <span>Login with Google</span>
+          <span className='text-white text-sm mt-0.5'>Login with Google</span>
         </button>
       ))}
       </div>
