@@ -3,18 +3,23 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Cookies from 'js-cookie';
-import { useState, useEffect } from 'react';
+import { useState, useEffect , useRef} from 'react';
 import { Link as ScrollLink } from 'react-scroll';
 import { Zoom } from 'react-reveal';
 import { useInView } from 'react-intersection-observer';
 import { useAnimation, motion } from 'framer-motion';
 import useFonts from "@/components/hooks/useFonts";
 
+
+
+
+
 export default function Home() {
   const [wallet, setwallet] = useState('');
   const [isHovered, setIsHovered] = useState(false);
   const [isHovered2, setIsHovered2] = useState(false);
 
+  
   const { righteous } = useFonts();
 
   const { ref, inView } = useInView({ threshold: 0.3 });
@@ -22,6 +27,9 @@ export default function Home() {
   const animation2 = useAnimation();
   const animation3 = useAnimation();
 
+  
+  
+/** @typedef {string} OpenIdProvider */
   useEffect(() => {
     console.log("inView", inView);
 
@@ -58,6 +66,38 @@ export default function Home() {
     }
   }, [inView, animation, animation2]);
 
+// ----------------------------------------------------------------------------------
+ 
+  const accountDataKey = 'zklogin-demo.accounts';
+  const [isAccountDataAvailable, setIsAccountDataAvailable] = useState(false);
+  function loadAccounts(){
+    if(typeof window !== 'undefined'){
+    const dataRaw = sessionStorage.getItem(accountDataKey);
+    if (!dataRaw) {
+        return [];
+    }
+    const data = JSON.parse(dataRaw);
+    return data;
+  }
+  }
+  const accounts = useRef(loadAccounts());
+  
+  const userAddr = accounts.current?.length
+  console.log(userAddr)
+
+  // console.log('sarvesh',accounts.current[0])
+  useEffect(() => {
+    setIsAccountDataAvailable(!!userAddr); // Update state based on the presence of userAddr
+  }, [userAddr]);
+
+  const handleExploreClick = () => {
+    if (!isAccountDataAvailable) {
+      alert("Please login to access this page.");
+    }
+  };
+  
+
+
   useEffect(() => {
     const call = () => {
       const loggedin = Cookies.get('snl_wallet');
@@ -86,7 +126,7 @@ export default function Home() {
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, [prevScrollY]);
-
+  
   return (
     <>
       <header>
@@ -142,24 +182,27 @@ export default function Home() {
               class="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1 z-10"
               id="mobile-menu-2"
             >
-              <ul class="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
-                <li>
-                  <a
-                    href="/explore"
-                    class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
-                  >
-                    Explore
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="/launch"
-                    class="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
-                  >
-                    Launch
-                  </a>
-                </li>
-              </ul>
+             <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+      <li>
+        <a
+           href={isAccountDataAvailable ? "/explore" : "#"}
+          className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+  
+          onClick={handleExploreClick}
+        >
+          Explore
+        </a>
+      </li>
+      <li>
+        <a
+            href={isAccountDataAvailable ? "/launch" : "#"}
+          className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+          onClick={handleExploreClick}
+        >
+          Launch
+        </a>
+      </li>
+    </ul>
             </div>
           </div>
         </nav>

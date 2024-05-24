@@ -314,6 +314,7 @@ const Navbar = () => {
         typeof jwtPayload.aud === 'string' ? jwtPayload.aud : jwtPayload.aud[0],
       maxEpoch: setupData.maxEpoch,
     });
+    window.location.reload()
   }
 
   /**
@@ -420,11 +421,13 @@ const Navbar = () => {
   function loadSetupData(): SetupData | null {
     if (typeof window !== 'undefined') {
       const dataRaw = sessionStorage.getItem(setupDataKey);
+      console.log("dataraw", dataRaw)
       if (!dataRaw) {
         return null;
       }
       const data: SetupData = JSON.parse(dataRaw);
       return data;
+
     }
     // Add a return statement here to cover the case when typeof window is undefined
     return null;
@@ -467,6 +470,7 @@ const Navbar = () => {
     sessionStorage.clear();
     accounts.current = [];
     setBalances(new Map());
+    window.location.reload()
   }
 
   /* HTML */
