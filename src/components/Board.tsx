@@ -613,8 +613,8 @@ async function fetchBalances(accounts: AccountData[]) {
 
   return (
     <>
-    <div className="flex gap-4">
-      <div className="flex justify-center items-stretch gap-4 backdrop-blur-2xl rounded-3xl py-10 pl-10">
+    <div className="flex justify-between">
+      <div className="flex justify-center items-stretch gap-4 backdrop-blur-2xl rounded-3xl py-10 pl-10 w-3/4">
         <div className="bg-cover overflow-hidden" style={{backgroundImage:`url("/board_game.png")`}}>
           <div className="grid grid-cols-9 grid-rows-8">
             {ipfsGameData
@@ -732,12 +732,12 @@ async function fetchBalances(accounts: AccountData[]) {
           </div>
         </div>
        
-        {accounts.current.map((acct) => (
+        {/* {accounts.current.map((acct) => (
     <button key={acct.userAddr} onClick={() => sendTransaction(acct)}>Initialize Game</button>
 ))}
 
 
-        <button onClick={queryevents}>Query</button>
+        <button onClick={queryevents}>Query</button> */}
       </div>
       </div>
 

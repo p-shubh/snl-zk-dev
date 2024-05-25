@@ -39,6 +39,55 @@ export default function Dashboard() {
     call();
   }, []);
 
+  const NETWORK='devnet';
+  const suiClient = new SuiClient({
+      url: getFullnodeUrl(NETWORK),
+  });
+
+  const queryevents = async(objectId) => {
+    let cursor = null;
+    let hasNextPage = false;
+    let allParsedJsonData = [];
+
+    do {
+      const res = await suiClient.queryEvents({
+                query: {
+                    MoveModule: {
+                        module: `snl`,
+                        package: '0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f',
+                    },
+                    // objectId,
+                },
+                limit: 50,
+                order: "ascending",
+                cursor,
+            });
+
+            cursor = res.nextCursor;
+    hasNextPage = res.hasNextPage;
+
+    console.log(
+      res.data.length,
+      res.data.map((d) => d.parsedJson),
+      res.nextCursor,
+      res.hasNextPage,
+    );
+    
+    allParsedJsonData = allParsedJsonData.concat(res.data.map((d) => d.parsedJson));
+
+  } while (hasNextPage);
+
+  console.log("allParsedJsonData", allParsedJsonData);
+
+  const details = allParsedJsonData.find((data) => data.object_id === objectId);
+
+  console.log("details", details);
+    return {
+      name: details ? details.name : '',
+      url: details ? details.url : '',
+    };
+  }
+
   useEffect(() => {
     const getnft = async() => {
       setLoading(true);
@@ -55,10 +104,8 @@ export default function Dashboard() {
           id: currentObjectId,
           options: { showContent: true },
         });
-      
-        const packageId = '0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f';
-      
-        if (objectInfo.data.content.type == `${packageId}::snl::SNL_NFT`) {
+            
+        if (objectInfo.data.content.type == `0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f::snl::SNL_NFT`) {
           // const widgetObjectId = objectInfo.data.content.fields.id.id;
           const widgetObjectId = objectInfo.data;
           console.log("widget spotted:", widgetObjectId);
