@@ -6,7 +6,9 @@ import Cookies from 'js-cookie';
 import { useState, useEffect, useRef } from 'react';
 import axios from "axios";
 import GameCard from '@/components/GameCard';
+import GameCreatedCard from '@/components/GameCreatedCard';
 import { getFullnodeUrl, SuiClient } from '@mysten/sui.js/client';
+import { createClient } from "@supabase/supabase-js";
 
 export default function Dashboard() {
 
@@ -14,6 +16,7 @@ export default function Dashboard() {
   const [pagestatus, setpagestatus] = useState('snl');
   const [loading, setLoading] = useState(false);
   const [games, setGames] = useState([]);
+  const [createdGames, setCreatedGames] = useState([]);
   const [bgImage, setBgImage] = useState('/snake1.png');
 
   const accountDataKey = 'zklogin-demo.accounts';
@@ -126,106 +129,34 @@ export default function Dashboard() {
     getnft();
   }, [])
 
-//   useEffect(() => {
-//     setLoading(true);
-//     const fetchGames = async () => {
-//       if(pagestatus === 'bingo'){
-//         try {
-//         const config = {
-//           headers: {
-//             Accept: "application/json, text/plain, */*",
-//             "Content-Type": "application/json",
-//             // Authorization: `Bearer ${auth}`,
-//           },
-//         };
-
-//         const reviewResults = await axios.get(
-//           `https://virtuegateway.myriadflow.com/api/v1.0/game/all`,
-//           config
-//         );
-//         console.log("current",reviewResults);
-//         const reviewsData = await reviewResults.data;
-
-//         // Filter games based on pagestatus
-//       const filteredGames = reviewsData.filter(game => game.type === pagestatus);
-
-//       setGames(filteredGames);
-//       console.log(filteredGames);
-//       } catch (error) {
-//         console.error('Error fetching reviews:', error);
-//       }
-//     }
-//     else if(pagestatus === 'memory'){try {
-//       const config = {
-//         headers: {
-//           Accept: "application/json, text/plain, */*",
-//           "Content-Type": "application/json",
-//           // Authorization: `Bearer ${auth}`,
-//         },
-//       };
-
-//       const reviewResults = await axios.get(
-//         `https://virtuegateway.myriadflow.com/api/v1.0/memory/all`,
-//         config
-//       );
-//       console.log("current",reviewResults);
-//       const reviewsData = await reviewResults.data;
-
-//       // Filter games based on pagestatus
-//     const filteredGames = reviewsData.filter(game => game.type === pagestatus);
-
-//     setGames(filteredGames);
-//     console.log(filteredGames);
-//     } catch (error) {
-//       console.error('Error fetching reviews:', error);
-//     }
-//   }
-//   else if(pagestatus === 'snl'){
-//     try {
-
-//       const options = {
-//         method: 'GET',
-//         headers: {accept: 'application/json', 'x-api-key': process.env.NEXT_PUBLIC_BLOCKVISION_KEY }
-//       };
+  useEffect(() => {
+    setLoading(true);
+    const fetchGames = async () => {
       
-//       fetch('https://api.blockvision.org/v2/sui/nft/nftList?objectType=0xf1681f601a1c021a0b4c8c8859d50917308fcbebfd19364c4e856ac670bb8496%3A%3Asuishi%3A%3ASuishi&pageIndex=4&pageSize=20', options)
-//         .then(response => response.json())
-//         .then(response => console.log("response from blockvision", response))
-//         .catch(err => console.error(err));
+        try {
 
-//     const config = {
-//       headers: {
-//         Accept: "application/json, text/plain, */*",
-//         "Content-Type": "application/json",
-//         // Authorization: `Bearer ${auth}`,
-//       },
-//     };
+          const projectlink = process.env.NEXT_PUBLIC_SUPABASE_URL;
+          const anonkey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-//     const reviewResults = await axios.get(
-//       `https://virtuegateway.myriadflow.com/api/v1.0/snl/all`,
-//       config
-//     );
-//     console.log("current",reviewResults);
-//     const reviewsData = await reviewResults.data;
+          const supabase = createClient(projectlink, anonkey);
 
-//     // Filter games based on pagestatus
-//   const filteredGames = reviewsData.filter(game => game.type === pagestatus);
+          const { data: selectdata } = await supabase.from("sln_suis").select();
 
-//   setGames(filteredGames);
-//   console.log(filteredGames);
-//   } catch (error) {
-//     console.error('Error fetching reviews:', error);
-//   }
-// }
+          console.log("inseted data", selectdata);
+
+          setCreatedGames(selectdata);
+          } catch (error) {
+            console.error('Error fetching reviews:', error);
+          }
+        }
+
+
+    const fetchReviewsData = async () => {
+      await fetchGames();
+    };
   
-//   }
-
-//     const fetchReviewsData = async () => {
-//       await fetchGames();
-//     };
-  
-//     fetchReviewsData().finally(() => setLoading(false));
-//   }, [pagestatus]);
+    fetchReviewsData().finally(() => setLoading(false));
+  }, [pagestatus]);
 
   
 
@@ -269,22 +200,21 @@ export default function Dashboard() {
       // style={{ backgroundImage: `url("${bgImage}")`, backgroundSize: 'cover' }}
       style={{backgroundColor:'#232C12'}}
     >
-      {/* Background div with blur */}
-      <div
-        style={{
-          // filter: 'blur(8px)',
-          position: 'absolute',
-          width: '100%',
-          height: '100%',
-          backgroundSize: 'cover',
-          // backgroundImage: `url("${bgImage}")`,
-          top: 0,
-          left: 0,
-          zIndex: 0, // Ensure the blur layer is below the content
-        }}
-      />
-          <div 
-          className='flex flex-wrap gap-10 justify-center'>
+      <div className="text-3xl text-white font-semibold text-start z-10">Launched games available for mint</div>
+
+          <div className='flex flex-wrap gap-10 justify-center'>
+          {loading ? (
+            <p>Loading...</p>
+          ) : (
+            createdGames.map((game, index) => (
+              <GameCreatedCard key={index} game={game} />
+            ))
+          )}
+          </div>
+
+          <div className="text-3xl text-white font-semibold text-start z-10 mt-20">Your Minted Games</div>
+
+          <div className='flex flex-wrap gap-10 justify-center'>
           {loading ? (
             <p>Loading...</p>
           ) : (
