@@ -487,12 +487,17 @@ type AccountData = {
 
         <div>
             <div className="flex gap-2">
-              <div className="text-xs leading-6 text-gray-700 sm:col-span-2 text-black">
+              <div className="text-xs leading-6 text-gray-700 sm:col-span-2 text-white">
                 <div>
                   {accounts.current.length > 0 && (
                     <div
                       className="flex border border-gray-300 px-1 py-1 rounded-3xl"
-                      style={{ backgroundColor: '#D1D8C5' }}
+                    //   style={{ backgroundColor: '#D1D8C5' }}
+                    style={{
+                        border: "1px solid #0162FF",
+                        boxShadow: "inset -10px -10px 60px 0 rgba(255, 255, 255, 0.4)",
+                        backgroundColor: "rgba(0, 98, 255, 0.2)"
+                      }}
                     >
                       <div id="accounts" className="section p-20 z-10">
                         {accounts.current.map((acct) => {
@@ -521,7 +526,7 @@ type AccountData = {
                               <div>
                             <div className='flex justify-between'>
                               <div className='font-bold'>
-                                  <span className="text-sm" style={{color:'#615EFC'}}>NETWORK</span><br/>
+                                  <span className="text-sm" style={{color:'#F4F27E'}}>NETWORK</span><br/>
                                   <div>Devnet</div>
                                 </div>
 
@@ -529,7 +534,7 @@ type AccountData = {
                                   <a target="_blank"
                                     rel="noopener noreferrer"
                                     href={explorerLink}
-                                     className="text-sm py-2 px-4 rounded-lg" style={{color:'#615EFC', border:'1px solid #615EFC'}}>
+                                     className="text-sm py-2 px-4 rounded-lg" style={{color:'#F4F27E', border:'1px solid #F4F27E'}}>
                                         EXPLORER
                                 </a>
                                 </div>
@@ -537,7 +542,7 @@ type AccountData = {
                                 </div>
 
                                 <div className='font-bold mt-4'>
-                                  <span className="text-sm" style={{color:'#615EFC'}}>ADDRESS</span><br/>
+                                  <span className="text-sm" style={{color:'#F4F27E'}}>ADDRESS</span><br/>
                                   <button className='flex gap-2'
                                   onClick={() => {
                                     navigator.clipboard.writeText(
@@ -554,12 +559,12 @@ type AccountData = {
                                 </div>
 
                                 <div className='font-bold mt-4'>
-                                  <span className="text-sm" style={{color:'#615EFC'}}>User ID</span><br/>
+                                  <span className="text-sm" style={{color:'#F4F27E'}}>USER ID</span><br/>
                                     {acct.sub}
                                 </div>
 
                                 <div className='font-bold mt-4'>
-                                <span className="text-sm" style={{color:'#615EFC'}}>BALANCE</span><br/>
+                                <span className="text-sm" style={{color:'#F4F27E'}}>BALANCE</span><br/>
                                   {typeof balance === 'undefined'
                                     ? '(loading)'
                                     : `${balance} SUI`}
