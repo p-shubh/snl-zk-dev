@@ -509,7 +509,9 @@ const Navbar = () => {
                         <div className="account flex gap-2 text-xs" key={acct.userAddr}>
 
             {avatarUrl && (
+              <Link href="/profile">
               <img src={avatarUrl} alt="Avatar" style={{ width: 40 }} />
+              </Link>
             )}
 
             <div>
