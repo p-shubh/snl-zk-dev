@@ -257,16 +257,16 @@ async function smartcontractposition(account: AccountData) {
   }
 }
 
-useEffect(() => {
-  const getpositionfromquery = async() => {
-    // const data = await queryevents();
-    await smartcontractposition(accounts.current[0]);
-    const data = await queryevents();
-    setPlayerPosition(data.player_position);
-  }
+// useEffect(() => {
+//   const getpositionfromquery = async() => {
+//     // const data = await queryevents();
+//     await smartcontractposition(accounts.current[0]);
+//     const data = await queryevents();
+//     setPlayerPosition(data.player_position);
+//   }
 
-  getpositionfromquery();
-}, [])
+//   getpositionfromquery();
+// }, [])
 
 
   const dieNumberToSVG: Record<number, string> = {
@@ -388,7 +388,7 @@ useEffect(() => {
           // Cap playerPosition at 72
           const newPosition = Math.min(nextPosition, 72);
           // Move the player to the next position
-          setPlayerPosition(newPosition);
+          // setPlayerPosition(newPosition);
 
           // Enable rolling dice after a move
           setIsMoveDisable(true);
