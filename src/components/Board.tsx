@@ -108,7 +108,7 @@ const GameBoard = ({ gameData, objectid } :any) => {
   async function smartcontractrolldice(account: AccountData) {
     try {
       const txb = new TransactionBlock();
-      const packageObjectId = "0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f";
+      const packageObjectId = "0x3572a3cfa90a5a2a1327ee8261808548bfb8045addfcc35d64e33f5f28ad5f01";
 
       console.log("object id", objectid);
 
@@ -193,7 +193,7 @@ const getRandomNumber = async () => {
 async function smartcontractposition(account: AccountData) {
   try {
     const txb = new TransactionBlock();
-    const packageObjectId = "0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f";
+    const packageObjectId = "0x3572a3cfa90a5a2a1327ee8261808548bfb8045addfcc35d64e33f5f28ad5f01";
 
     console.log("object id", objectid);
 
@@ -442,7 +442,7 @@ async function sendTransaction(account: AccountData) {
 
     // Sign the transaction bytes with the ephemeral private key
     const txb = new TransactionBlock();
-    const packageObjectId = "0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f";
+    const packageObjectId = "0x3572a3cfa90a5a2a1327ee8261808548bfb8045addfcc35d64e33f5f28ad5f01";
     txb.moveCall({
       target: `${packageObjectId}::snl::initialize_game`,
       arguments: [
@@ -554,7 +554,7 @@ async function fetchBalances(accounts: AccountData[]) {
                 query: {
                     MoveModule: {
                         module: `snl`,
-                        package: '0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f',
+                        package: '0x3572a3cfa90a5a2a1327ee8261808548bfb8045addfcc35d64e33f5f28ad5f01',
                     },
                 },
                 limit: 50,

@@ -54,7 +54,7 @@ export default function Dashboard() {
                 query: {
                     MoveModule: {
                         module: `snl`,
-                        package: '0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f',
+                        package: '0x3572a3cfa90a5a2a1327ee8261808548bfb8045addfcc35d64e33f5f28ad5f01',
                     },
                     // objectId,
                 },
@@ -98,14 +98,18 @@ export default function Dashboard() {
       // iterate through all objects owned by address
       for (let i = 0; i < objects.data.length; i++) {
         const currentObjectId = objects.data[i].data.objectId;
+
+        // await queryevents();
       
         // get object information
         const objectInfo = await suiClient.getObject({
           id: currentObjectId,
           options: { showContent: true },
         });
+
+        console.log("onject info", objectInfo);
             
-        if (objectInfo.data.content.type == `0x33980102d580d62a573785865c7ac6dd36dbcb35faae0771b5b5ef1949b9838f::snl::SNL_NFT`) {
+        if (objectInfo.data.content.type == `0x3572a3cfa90a5a2a1327ee8261808548bfb8045addfcc35d64e33f5f28ad5f01::snl::SNL_NFT`) {
           // const widgetObjectId = objectInfo.data.content.fields.id.id;
           const widgetObjectId = objectInfo.data;
           console.log("widget spotted:", widgetObjectId);
