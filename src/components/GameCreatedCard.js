@@ -20,6 +20,7 @@ const GameCard = ({ game }) => {
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(gamestartTime));
   const [ipfsdata, setIpfsData] = useState(null);
   const [creategamedone, setcreategamedone] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const accountDataKey = 'zklogin-demo.accounts';
   const NETWORK='devnet';
@@ -105,7 +106,7 @@ const GameCard = ({ game }) => {
   // ------------------------------------------------------- mint game ----------------------------------------------------
 
   async function sendTransaction(account, ipfsmetahashnfturl) {
-    
+    setLoading(true);
     try {
       setModalContent('🚀 Sending transaction...');
       console.log('[sendTransaction] Starting transaction');
@@ -165,15 +166,15 @@ const GameCard = ({ game }) => {
       });
   
       console.debug('[sendTransaction] executeTransactionBlock response:', result);
+      setLoading(false);
       setcreategamedone(true);
       setTimeout(() => {
         window.location.reload();
       }, 2000);
     } catch (error) {
       console.warn('[sendTransaction] executeTransactionBlock failed:', error);
-    } finally {
-      setModalContent('');
-    }
+      setLoading(false);
+    } 
   }
 
   return (
@@ -249,6 +250,25 @@ const GameCard = ({ game }) => {
                 <p className="text-sm text-center pt-4 pb-20">
                   Please wait while we reload your content.
                 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {loading && (
+        <div
+          style={{ backgroundColor: "#222944E5" }}
+          className="flex overflow-y-auto overflow-x-hidden fixed inset-0 z-50 justify-center items-center w-full max-h-full"
+          id="popupmodal"
+        >
+          <div className="relative p-4 w-full max-h-full">
+            <div className="relative rounded-lg shadow">
+              <div className="flex justify-center gap-4">
+                <img
+                  src="/dice_loader.gif"
+                  alt="Loading icon"
+                />
               </div>
             </div>
           </div>
