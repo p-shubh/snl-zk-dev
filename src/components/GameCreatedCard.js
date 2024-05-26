@@ -1,13 +1,50 @@
 import React from 'react';
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { removePrefix } from '../../modules/Utils/ipfsUtil';
+import { SuiClient, getFullnodeUrl } from '@mysten/sui.js/client';
+import { TransactionBlock } from "@mysten/sui.js/transactions";
+import {
+    SerializedSignature,
+    decodeSuiPrivateKey,
+  } from "@mysten/sui.js/cryptography";
+  import { Ed25519Keypair } from "@mysten/sui.js/keypairs/ed25519";
+  import {
+    genAddressSeed,
+    getZkLoginSignature,
+  } from "@mysten/zklogin";
 
 const GameCard = ({ game }) => {
   const starttime = game.startTimestamp;
   const gamestartTime = new Date(parseInt(starttime, 10));
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(gamestartTime));
   const [ipfsdata, setIpfsData] = useState(null);
+
+  const accountDataKey = 'zklogin-demo.accounts';
+  const NETWORK='devnet';
+  const MAX_EPOCH = 2; // keep ephemeral keys active for this many Sui epochs from now (1 epoch ~= 24h)
+  const accounts = useRef(loadAccounts()); // useRef() instead of useState() because of setInterval()
+  // const [balances, setBalances] = useState(new Map()); // Map<Sui address, SUI balance>
+  const [modalContent, setModalContent] = useState('');
+  const suiClient = new SuiClient({
+      url: getFullnodeUrl(NETWORK),
+  });
+
+  function loadAccounts(){
+    if(typeof window !== 'undefined'){
+    const dataRaw = sessionStorage.getItem(accountDataKey);
+    if (!dataRaw) {
+        return [];
+    }
+    const data = JSON.parse(dataRaw);
+    return data;
+  }
+  }
+
+  function keypairFromSecretKey(privateKeyBase64) {
+    const keyPair = decodeSuiPrivateKey(privateKeyBase64);
+    return Ed25519Keypair.fromSecretKey(keyPair.secretKey);
+  }
 
   useEffect(() => {
     // Update the countdown every second
@@ -48,7 +85,7 @@ const GameCard = ({ game }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const urlhash = game?.Url.slice(7)
+        const urlhash = game?.url.slice(7)
         console.log("urlhash", urlhash);
         const data = await fetch(`https://nftstorage.link/ipfs/${urlhash}`); // Replace with your IPFS hash
         const ipfsdata = await data.json();
@@ -61,6 +98,79 @@ const GameCard = ({ game }) => {
 
     fetchData();
   }, [game]);
+
+
+
+  // ------------------------------------------------------- mint game ----------------------------------------------------
+
+  async function sendTransaction(account, ipfsmetahashnfturl) {
+    
+    try {
+      setModalContent('🚀 Sending transaction...');
+      console.log('[sendTransaction] Starting transaction');
+  
+      // Sign the transaction bytes with the ephemeral private key
+      const txb = new TransactionBlock();
+      const packageObjectId = "0x3572a3cfa90a5a2a1327ee8261808548bfb8045addfcc35d64e33f5f28ad5f01";
+      txb.moveCall({
+        target: `${packageObjectId}::snl::initialize_game`,
+        arguments: [
+          txb.pure(game?.name),        // Name argument
+          txb.pure(ipfsmetahashnfturl), // Description argument
+        ],
+      });
+  
+      txb.setSender(accounts.current[0].userAddr);
+      console.log('[sendTransaction] Account address:', accounts.current[0].userAddr);
+  
+      const ephemeralKeyPair = keypairFromSecretKey(account.ephemeralPrivateKey);
+      const { bytes, signature: userSignature } = await txb.sign({
+        client: suiClient,
+        signer: ephemeralKeyPair,
+      });
+  
+      console.log('[sendTransaction] Transaction signed:', { bytes, userSignature });
+  
+      // Generate an address seed by combining userSalt, sub (subject ID), and aud (audience)
+      const addressSeed = genAddressSeed(
+        window.BigInt(account.userSalt),
+        'sub',
+        account.sub,
+        account.aud,
+      ).toString();
+  
+      console.log('[sendTransaction] Address seed generated:', addressSeed);
+  
+      // Serialize the zkLogin signature by combining the ZK proof (inputs), the maxEpoch,
+      // and the ephemeral signature (userSignature)
+      const zkLoginSignature = getZkLoginSignature({
+        inputs: {
+          ...account.zkProofs,
+          addressSeed,
+        },
+        maxEpoch: account.maxEpoch,
+        userSignature,
+      });
+  
+      console.log('[sendTransaction] ZK Login signature created:', zkLoginSignature);
+  
+      // Execute the transaction
+      const result = await suiClient.executeTransactionBlock({
+        transactionBlock: bytes,
+        signature: zkLoginSignature,
+        options: {
+          showEffects: true,
+        },
+      });
+  
+      console.debug('[sendTransaction] executeTransactionBlock response:', result);
+      setcreategamedone(true);
+    } catch (error) {
+      console.warn('[sendTransaction] executeTransactionBlock failed:', error);
+    } finally {
+      setModalContent('');
+    }
+  }
 
   return (
     // <Link href={`/games/snl/${encodeURIComponent(game?.objectId)}?gameData=${encodeURIComponent(ipfsdata?.gameData.slice(7))}`} className="z-10">
@@ -102,13 +212,17 @@ const GameCard = ({ game }) => {
               height="100"
             />)}
           </div>
-          <div className="rounded-lg px-4 py-2 m-2 text-white" style={{backgroundColor:'#232C12'}}>Mint Game</div>
+          <button className="rounded-lg px-4 py-2 m-2 text-white" style={{backgroundColor:'#232C12'}}
+          onClick={()=>{sendTransaction(accounts.current[0], game?.url)}}
+          >
+            Mint Game
+            </button>
           </div>
 
           <div className="m-4">
             <div className="flex justify-between font-bold">
               <h5>
-                {game?.Name} ({ipfsdata?.symbol})
+                {game?.name} ({ipfsdata?.symbol})
               </h5>
             </div>
             <p className="mt-2">{ipfsdata?.description}</p>
