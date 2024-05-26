@@ -15,7 +15,8 @@ import { NetworkName, makeExplorerUrl, requestSuiFromFaucet, shortenSuiAddress }
 import { Modal, isLocalhost } from '@polymedia/webutils';
 import { jwtDecode } from 'jwt-decode';
 import { useEffect, useRef, useState } from 'react';
-
+import Link from 'next/link';
+import Navbar from '@/components/Navbar';
 
 /* Configuration */
 
@@ -384,83 +385,262 @@ type AccountData = {
     return (
     <div id='page'>
 
-        <Modal content={modalContent} />
-
-        <a id='polymedia-logo' href='https://polymedia.app' target='_blank' rel='noopener noreferrer'>
-            <img src='https://assets.polymedia.app/img/all/logo-nomargin-transparent-512x512.webp' alt='Polymedia' />
-        </a>
-
-        <div id='network-indicator'>
-            <label>{NETWORK}</label>
-        </div>
-
-        <h1>Sui zkLogin demo</h1>
-
-        <div id='login-buttons' className='section'>
-            <h2>Log in:</h2>
-            {openIdProviders.map(provider =>
-                <button
-                    className={`btn-login ${provider}`}
-                    onClick={() => {beginZkLogin(provider)} }
-                    key={provider}
-                >
-                    {provider}
-                </button>
-            )}
-        </div>
-
-        { accounts.current.length > 0 &&
-        <div id='accounts' className='section'>
-            <h2>Accounts:</h2>
-            {accounts.current.map(acct => {
-                const balance = balances.get(acct.userAddr);
-                const explorerLink = makeExplorerUrl(NETWORK, 'address', acct.userAddr);
-                return (
-                <div className='account' key={acct.userAddr}>
-                    <div>
-                        <label className={`provider ${acct.provider}`}>{acct.provider}</label>
-                    </div>
-                    <div>
-                        Address: <a target='_blank' rel='noopener noreferrer' href={explorerLink}>
-                            {shortenSuiAddress(acct.userAddr, 6, 6, '0x', '...')}
-                        </a>
-                    </div>
-                    <div>User ID: {acct.sub}</div>
-                    <div>Balance: {typeof balance === 'undefined' ? '(loading)' : `${balance} SUI`}</div>
-                    <button
-                        className={`btn-send ${!balance ? 'disabled' : ''}`}
-                        disabled={!balance}
-                        onClick={() => {sendTransaction(acct)}}
+      <div className="z-10 w-full flex">
+        <div className="z-10 w-full" style={{ backgroundColor: '#C5FFF8' }}>
+          <header>
+            <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
+              <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
+                <Link href="/" className="flex items-center">
+                  <img
+                    src="/bingo_lion2.png"
+                    className="mr-3 h-6 sm:h-9"
+                    alt="Flowbite Logo"
+                  />
+                  <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
+                    SNL
+                  </span>
+                </Link>
+                <div className="flex items-center lg:order-2">
+                  <Navbar />
+                  <button
+                    data-collapse-toggle="mobile-menu-2"
+                    type="button"
+                    className="inline-flex items-center p-2 ml-1 text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                    aria-controls="mobile-menu-2"
+                    aria-expanded="false"
+                  >
+                    <span className="sr-only">Open main menu</span>
+                    <svg
+                      className="w-6 h-6"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
                     >
-                        Send transaction
-                    </button>
-                    { balance === 0 &&
-                        <button
-                            className='btn-faucet'
-                            onClick={() => {
-                                requestSuiFromFaucet(NETWORK, acct.userAddr);
-                                setModalContent('💰 Requesting SUI from faucet. This will take a few seconds...');
-                                setTimeout(() => { setModalContent('') }, 3000);
-                            }}
-                        >
-                            Use faucet
-                        </button>
-                    }
-                    <hr/>
+                      <path
+                        fill-rule="evenodd"
+                        d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                    <svg
+                      className="hidden w-6 h-6"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
+                  </button>
                 </div>
-                );
-            })}
+                <div
+                  className="hidden justify-between items-center w-full lg:flex lg:w-auto lg:order-1 z-10"
+                  id="mobile-menu-2"
+                >
+                  <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+                    <li>
+                      <Link
+                        href="/explore"
+                        className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+                      >
+                        Explore
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        href="/launch"
+                        className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-primary-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+                      >
+                        Launch
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </nav>
+          </header>
         </div>
-        }
+      </div>
 
-        <div className='section'>
-            <button
-                className='btn-clear'
-                onClick={() => { clearState() }}
-            >
-                🧨 CLEAR STATE
-            </button>
+      <main
+        className="flex flex-col items-center justify-between py-14 h-screen"
+        style={{ backgroundImage: `url("/launchbg.png")` }}
+      >
+        <div
+          style={{
+            // filter: 'blur(8px)',
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            backgroundSize: 'cover',
+            top: 0,
+            left: 0,
+            zIndex: 0, // Ensure the blur layer is below the content
+          }}
+        />
+
+        <div>
+            <div className="flex gap-2">
+              <div className="text-xs leading-6 text-gray-700 sm:col-span-2 text-black">
+                <div>
+                  {accounts.current.length > 0 && (
+                    <div
+                      className="flex border border-gray-300 px-1 py-1 rounded-3xl"
+                      style={{ backgroundColor: '#D1D8C5' }}
+                    >
+                      <div id="accounts" className="section p-20 z-10">
+                        {accounts.current.map((acct) => {
+                          const balance = balances.get(acct.userAddr);
+                          const explorerLink = makeExplorerUrl(
+                            NETWORK,
+                            'address',
+                            acct.userAddr
+                          );
+
+                          return (
+                            <div
+                              className="account flex gap-10 text-lg"
+                              key={acct.userAddr}
+                            >
+                              {/* {avatarUrl && (
+                                <Link href="/profile">
+                                  <img
+                                    src={avatarUrl}
+                                    alt="Avatar"
+                                    style={{ width: 80 }}
+                                  />
+                                </Link>
+                              )} */}
+
+                              <div>
+                            <div className='flex justify-between'>
+                              <div className='font-bold'>
+                                  <span className="text-sm" style={{color:'#615EFC'}}>NETWORK</span><br/>
+                                  <div>Devnet</div>
+                                </div>
+
+                                <div className='font-bold'>
+                                  <a target="_blank"
+                                    rel="noopener noreferrer"
+                                    href={explorerLink}
+                                     className="text-sm py-2 px-4 rounded-lg" style={{color:'#615EFC', border:'1px solid #615EFC'}}>
+                                        EXPLORER
+                                </a>
+                                </div>
+
+                                </div>
+
+                                <div className='font-bold mt-4'>
+                                  <span className="text-sm" style={{color:'#615EFC'}}>ADDRESS</span><br/>
+                                  <Link
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    href={explorerLink}
+                                  >
+                                    {
+                                      acct.userAddr
+                                    }
+                                  </Link>
+                                </div>
+
+                                <div className='font-bold mt-4'>
+                                  <span className="text-sm" style={{color:'#615EFC'}}>User ID</span><br/>
+                                    {acct.sub}
+                                </div>
+
+                                <div className='font-bold mt-4'>
+                                <span className="text-sm" style={{color:'#615EFC'}}>BALANCE</span><br/>
+                                  {typeof balance === 'undefined'
+                                    ? '(loading)'
+                                    : `${balance} SUI`}
+                                </div>
+
+                                {/* <div className="flex justify-between mt-10">
+                                  <button
+                                    className="btn-faucet text-green-600 font-bold p-2 rounded-lg"
+                                    style={{border:'1px solid green'}}
+                                    onClick={() => {
+                                      requestSuiFromFaucet(
+                                        NETWORK,
+                                        acct.userAddr
+                                      );
+                                      setModalContent(
+                                        '💰 Requesting SUI from faucet. This will take a few seconds...'
+                                      );
+                                      setTimeout(() => {
+                                        setModalContent('');
+                                      }, 3000);
+                                    }}
+                                  >
+                                    Faucet SUI
+                                  </button>
+
+                                  <button
+                                    className="text-red-500 font-bold p-2 rounded-lg"
+                                    style={{border:'1px solid red'}}
+                                    onClick={() => {
+                                      clearState();
+                                    }}
+                                  >
+                                    Log Out
+                                  </button>
+                                </div> */}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* {accounts.current.length <= 0 && (
+<div>
+      {openIdProviders.map((provider) => (
+        <button
+          className={`btn-login ${provider} flex gap-2 border border-white p-2 rounded-lg z-10`}
+          onClick={() => {
+            beginZkLogin(provider);
+          }}
+          key={provider}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            x="0px"
+            y="0px"
+            width="24"
+            height="24"
+            viewBox="0 0 48 48"
+          >
+            <path
+              fill="#FFC107"
+              d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12c0-6.627,5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24c0,11.045,8.955,20,20,20c11.045,0,20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"
+            ></path>
+            <path
+              fill="#FF3D00"
+              d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"
+            ></path>
+            <path
+              fill="#4CAF50"
+              d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"
+            ></path>
+            <path
+              fill="#1976D2"
+              d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.571c0.001-0.001,0.002-0.001,0.003-0.002l6.19,5.238C36.971,39.205,44,34,44,24C44,22.659,43.862,21.35,43.611,20.083z"
+            ></path>
+          </svg>
+          <span className='text-white text-sm mt-0.5'>Login with Google</span>
+        </button>
+      ))}
+      </div>
+       )} */}
         </div>
+      </main>
 
     </div>
     );

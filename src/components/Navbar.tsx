@@ -470,7 +470,7 @@ const Navbar = () => {
     sessionStorage.clear();
     accounts.current = [];
     setBalances(new Map());
-    window.location.reload()
+    window.location.href= "/";
   }
 
   /* HTML */
