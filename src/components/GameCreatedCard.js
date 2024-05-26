@@ -19,6 +19,7 @@ const GameCard = ({ game }) => {
   const gamestartTime = new Date(parseInt(starttime, 10));
   const [timeLeft, setTimeLeft] = useState(calculateTimeLeft(gamestartTime));
   const [ipfsdata, setIpfsData] = useState(null);
+  const [creategamedone, setcreategamedone] = useState(false);
 
   const accountDataKey = 'zklogin-demo.accounts';
   const NETWORK='devnet';
@@ -165,6 +166,9 @@ const GameCard = ({ game }) => {
   
       console.debug('[sendTransaction] executeTransactionBlock response:', result);
       setcreategamedone(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
     } catch (error) {
       console.warn('[sendTransaction] executeTransactionBlock failed:', error);
     } finally {
@@ -173,7 +177,6 @@ const GameCard = ({ game }) => {
   }
 
   return (
-    // <Link href={`/games/snl/${encodeURIComponent(game?.objectId)}?gameData=${encodeURIComponent(ipfsdata?.gameData.slice(7))}`} className="z-10">
       <div className="border text-black rounded-2xl mt-10 h-full" style={{backgroundColor:'#CAF4FF'}}>
         <div className="w-full">
           {ipfsdata?.picture ? (<img
@@ -228,8 +231,30 @@ const GameCard = ({ game }) => {
             <p className="mt-2">{ipfsdata?.description}</p>
           </div>
         </div>
+
+        {creategamedone && (
+        <div
+          style={{ backgroundColor: '#222944E5' }}
+          className="flex overflow-y-auto overflow-x-hidden fixed inset-0 z-50 justify-center items-center w-full max-h-full"
+          id="popupmodal"
+        >
+          <div className="relative p-4 lg:w-1/3 w-full max-w-2xl max-h-full">
+            <div className="relative rounded-lg shadow bg-black text-white">
+              <div className="flex items-center justify-end p-4 md:p-5 rounded-t dark:border-gray-600"></div>
+
+              <div className="p-4 space-y-4 pt-10">
+                <p className="text-3xl text-center font-bold text-green-500">
+                  Successfully Minted!!
+                </p>
+                <p className="text-sm text-center pt-4 pb-20">
+                  Please wait while we reload your content.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}   
       </div>
-    // </Link>
   );
 };
 
