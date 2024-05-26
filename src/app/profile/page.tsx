@@ -17,6 +17,9 @@ import { jwtDecode } from 'jwt-decode';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
+import {
+    FaCopy,
+  } from "react-icons/fa";
 
 /* Configuration */
 
@@ -535,15 +538,19 @@ type AccountData = {
 
                                 <div className='font-bold mt-4'>
                                   <span className="text-sm" style={{color:'#615EFC'}}>ADDRESS</span><br/>
-                                  <Link
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    href={explorerLink}
+                                  <button className='flex gap-2'
+                                  onClick={() => {
+                                    navigator.clipboard.writeText(
+                                        acct.userAddr
+                                    );
+                                  }}
                                   >
-                                    {
+                                    <div>{
                                       acct.userAddr
-                                    }
-                                  </Link>
+                                    }</div>
+                                    
+                                    <div><FaCopy style={{ marginTop: 2}} /></div>
+                                  </button>
                                 </div>
 
                                 <div className='font-bold mt-4'>
