@@ -20,6 +20,7 @@ import Navbar from '@/components/Navbar';
 import {
     FaCopy,
   } from "react-icons/fa";
+import useFonts from "@/components/hooks/useFonts";
 
 /* Configuration */
 
@@ -382,6 +383,8 @@ type AccountData = {
 
     /* HTML */
 
+    const { righteous } = useFonts();
+
     const openIdProviders: OpenIdProvider[] = isLocalhost()
         ? ['Google' ]
         : ['Google']; // Facebook requires business verification to publish the app
@@ -395,12 +398,12 @@ type AccountData = {
               <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                 <Link href="/" className="flex items-center">
                   <img
-                    src="/bingo_lion2.png"
+                    src="/snllogo.png"
                     className="mr-3 h-6 sm:h-9"
                     alt="Flowbite Logo"
                   />
-                  <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
-                    SNL
+                  <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white" style={righteous.style}>
+                  Snakes N Ladders
                   </span>
                 </Link>
                 <div className="flex items-center lg:order-2">

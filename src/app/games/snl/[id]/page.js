@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import GameBoard from '@/components/Board';
 import { useSearchParams } from 'next/navigation';
+import useFonts from "@/components/hooks/useFonts";
 const envcollectionid = "0xdb814ad6dcacad6d1e1caa459b2363047fecc37cd5cdd848d0e3775a65e54792";
 const graphqlaptos = "https://indexer-randomnet.hasura.app/v1/graphql";
 
@@ -31,6 +32,8 @@ export default function Bingo({ params }) {
     backgroundImage: 'linear-gradient(to bottom, #7AB2B2, #4D869C)',
   }
 
+  const { righteous } = useFonts();
+
   return (
     <>
     <div className="z-10 w-full flex">
@@ -39,8 +42,8 @@ export default function Bingo({ params }) {
     <nav class="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
         <div class="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
             <Link href="/" class="flex items-center">
-                <img src="/bingo_lion2.png" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
-                <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white">SNL</span>
+                <img src="/snllogo.png" class="mr-3 h-6 sm:h-9" alt="Flowbite Logo" />
+                <span class="self-center text-xl font-semibold whitespace-nowrap dark:text-white" style={righteous.style}>Snakes N Ladders</span>
             </Link>
             <div class="flex items-center lg:order-2">
                 <Navbar/>
