@@ -174,6 +174,7 @@ const GameCard = ({ game }) => {
     } catch (error) {
       console.warn('[sendTransaction] executeTransactionBlock failed:', error);
       setLoading(false);
+      alert(error);
     } 
   }
 

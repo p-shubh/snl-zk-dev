@@ -211,10 +211,35 @@ export default function Dashboard() {
       // console.log("response game post", response);
       setipfsmetahashnft(ipfsmetahashnft);
 
-      sendTransaction(accounts.current[0], ipfsmetahashnft);
+      // sendTransaction(accounts.current[0], ipfsmetahashnft);
 
-      console.log("game created")
-      setcreategamedone(true);
+      try{
+
+        const postgamedata = { name: gamename, url: ipfsmetahashnft}
+        const response = await fetch(
+          `http://18.220.86.101:6060/v1.0/snl/insert-address`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              // 'Authorization': `Bearer ${auth}`
+            },
+            body: JSON.stringify(postgamedata),
+          }
+        );
+
+        console.log("post api", response);
+        
+        console.log("game created")
+        setcreategamedone(true);
+  
+        setTimeout(() => {
+          window.location.replace('/explore');
+        }, 2000);
+
+      }catch (error){
+        console.error('Error handling', error);
+      }
     
     } catch (error) {
       console.error('Error handling', error);
