@@ -113,7 +113,7 @@ const GameCard = ({ game }) => {
   
       // Sign the transaction bytes with the ephemeral private key
       const txb = new TransactionBlock();
-      const packageObjectId = "0x3572a3cfa90a5a2a1327ee8261808548bfb8045addfcc35d64e33f5f28ad5f01";
+      const packageObjectId = "0xa9162ca798e2ab2f98d28b1281ad872f832708f2bb03d74b6aeb72cc57444661";
       txb.moveCall({
         target: `${packageObjectId}::snl::initialize_game`,
         arguments: [

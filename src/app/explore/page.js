@@ -58,7 +58,7 @@ export default function Dashboard() {
                 query: {
                     MoveModule: {
                         module: `snl`,
-                        package: '0x3572a3cfa90a5a2a1327ee8261808548bfb8045addfcc35d64e33f5f28ad5f01',
+                        package: '0xa9162ca798e2ab2f98d28b1281ad872f832708f2bb03d74b6aeb72cc57444661',
                     },
                     // objectId,
                 },
@@ -113,7 +113,7 @@ export default function Dashboard() {
 
         console.log("onject info", objectInfo);
             
-        if (objectInfo.data.content.type == `0x3572a3cfa90a5a2a1327ee8261808548bfb8045addfcc35d64e33f5f28ad5f01::snl::SNL_NFT`) {
+        if (objectInfo.data.content.type == `0xa9162ca798e2ab2f98d28b1281ad872f832708f2bb03d74b6aeb72cc57444661::snl::SNL_NFT`) {
           // const widgetObjectId = objectInfo.data.content.fields.id.id;
           const widgetObjectId = objectInfo.data;
           console.log("widget spotted:", widgetObjectId);
