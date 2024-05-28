@@ -66,7 +66,7 @@ const GameCard = ({ game }) => {
     <Link href={`/games/snl/${encodeURIComponent(game?.objectId)}?gameData=${encodeURIComponent(ipfsdata?.gameData.slice(7))}`} className="z-10">
       <div className="border text-black rounded-2xl mt-10 h-full" style={{backgroundColor:'#CAF4FF'}}>
         <div className="w-full">
-          {ipfsdata?.picture ? (<img
+          {ipfsdata?.coverImage ? (<img
             alt="alt"
             src={`${'https://nftstorage.link/ipfs'}/${removePrefix(
               ipfsdata?.coverImage
@@ -111,7 +111,7 @@ const GameCard = ({ game }) => {
                 {game?.content.fields.name} ({ipfsdata?.symbol})
               </h5>
             </div>
-            <p className="mt-2">{ipfsdata?.description}</p>
+            {/* <p className="mt-2">{ipfsdata?.description}</p> */}
             <div className="mt-2">
               {timeLeft.total > 0 ? (
                 <p className="">

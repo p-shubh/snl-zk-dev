@@ -181,7 +181,7 @@ const GameCard = ({ game }) => {
   return (
       <div className="border text-black rounded-2xl mt-10 h-full" style={{backgroundColor:'#CAF4FF'}}>
         <div className="w-full">
-          {ipfsdata?.picture ? (<img
+          {ipfsdata?.coverImage ? (<img
             alt="alt"
             src={`${'https://nftstorage.link/ipfs'}/${removePrefix(
               ipfsdata?.coverImage
@@ -230,7 +230,7 @@ const GameCard = ({ game }) => {
                 {game?.name} ({ipfsdata?.symbol})
               </h5>
             </div>
-            <p className="mt-2">{ipfsdata?.description}</p>
+            {/* <p className="mt-2">{ipfsdata?.description}</p> */}
           </div>
         </div>
 
