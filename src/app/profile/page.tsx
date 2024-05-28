@@ -12,7 +12,7 @@ import {
     jwtToAddress,
 } from '@mysten/zklogin';
 import { NetworkName, makeExplorerUrl, requestSuiFromFaucet, shortenSuiAddress } from '@polymedia/suits';
-import { Modal, isLocalhost } from '@polymedia/webutils';
+// import { Modal, isLocalhost } from '@polymedia/webutils';
 import { jwtDecode } from 'jwt-decode';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
@@ -256,58 +256,58 @@ type AccountData = {
      * Assemble a zkLogin signature and submit a transaction
      * https://docs.sui.io/concepts/cryptography/zklogin#assemble-the-zklogin-signature-and-submit-the-transaction
      */
-    async function sendTransaction(account: AccountData) {
-        setModalContent('🚀 Sending transaction...');
+    // async function sendTransaction(account: AccountData) {
+    //     setModalContent('🚀 Sending transaction...');
 
-        // Sign the transaction bytes with the ephemeral private key
-        const txb = new TransactionBlock();
-        txb.setSender(account.userAddr);
+    //     // Sign the transaction bytes with the ephemeral private key
+    //     const txb = new TransactionBlock();
+    //     txb.setSender(account.userAddr);
 
-        const ephemeralKeyPair = keypairFromSecretKey(account.ephemeralPrivateKey);
-        const { bytes, signature: userSignature } = await txb.sign({
-            client: suiClient,
-            signer: ephemeralKeyPair,
-        });
+    //     const ephemeralKeyPair = keypairFromSecretKey(account.ephemeralPrivateKey);
+    //     const { bytes, signature: userSignature } = await txb.sign({
+    //         client: suiClient,
+    //         signer: ephemeralKeyPair,
+    //     });
 
-        // Generate an address seed by combining userSalt, sub (subject ID), and aud (audience)
-        const addressSeed = genAddressSeed(
-            window.BigInt(account.userSalt),
-            'sub',
-            account.sub,
-            account.aud,
-        ).toString();
+    //     // Generate an address seed by combining userSalt, sub (subject ID), and aud (audience)
+    //     const addressSeed = genAddressSeed(
+    //         window.BigInt(account.userSalt),
+    //         'sub',
+    //         account.sub,
+    //         account.aud,
+    //     ).toString();
 
-        // Serialize the zkLogin signature by combining the ZK proof (inputs), the maxEpoch,
-        // and the ephemeral signature (userSignature)
-        const zkLoginSignature : SerializedSignature = getZkLoginSignature({
-            inputs: {
-                ...account.zkProofs,
-                addressSeed,
-            },
-            maxEpoch: account.maxEpoch,
-            userSignature,
-        });
+    //     // Serialize the zkLogin signature by combining the ZK proof (inputs), the maxEpoch,
+    //     // and the ephemeral signature (userSignature)
+    //     const zkLoginSignature : SerializedSignature = getZkLoginSignature({
+    //         inputs: {
+    //             ...account.zkProofs,
+    //             addressSeed,
+    //         },
+    //         maxEpoch: account.maxEpoch,
+    //         userSignature,
+    //     });
 
-        // Execute the transaction
-        await suiClient.executeTransactionBlock({
-            transactionBlock: bytes,
-            signature: zkLoginSignature,
-            options: {
-                showEffects: true,
-            },
-        })
-        .then(result => {
-            console.debug('[sendTransaction] executeTransactionBlock response:', result);
-            fetchBalances([account]);
-        })
-        .catch((error: unknown) => {
-            console.warn('[sendTransaction] executeTransactionBlock failed:', error);
-            return null;
-        })
-        .finally(() => {
-            setModalContent('');
-        });
-    }
+    //     // Execute the transaction
+    //     await suiClient.executeTransactionBlock({
+    //         transactionBlock: bytes,
+    //         signature: zkLoginSignature,
+    //         options: {
+    //             showEffects: true,
+    //         },
+    //     })
+    //     .then(result => {
+    //         console.debug('[sendTransaction] executeTransactionBlock response:', result);
+    //         fetchBalances([account]);
+    //     })
+    //     .catch((error: unknown) => {
+    //         console.warn('[sendTransaction] executeTransactionBlock failed:', error);
+    //         return null;
+    //     })
+    //     .finally(() => {
+    //         setModalContent('');
+    //     });
+    // }
 
     /**
      * Create a keypair from a base64-encoded secret key
@@ -343,37 +343,51 @@ type AccountData = {
     /* Session storage */
 
     function saveSetupData(data: SetupData) {
+      if (typeof window !== "undefined") {
         sessionStorage.setItem(setupDataKey, JSON.stringify(data))
+      }
     }
 
     function loadSetupData(): SetupData|null {
+      if (typeof window !== "undefined") {
         const dataRaw = sessionStorage.getItem(setupDataKey);
         if (!dataRaw) {
-            return null;
+          return null;
         }
         const data: SetupData = JSON.parse(dataRaw);
         return data;
+      }
+      return null; // Ensure the function returns null if window is undefined
     }
+    
 
     function clearSetupData(): void {
+      // if (typeof window !== "undefined") {
         sessionStorage.removeItem(setupDataKey);
+      // }
     }
 
     function saveAccount(account: AccountData): void {
+      if (typeof window !== "undefined") {
         const newAccounts = [account, ...accounts.current];
         sessionStorage.setItem(accountDataKey, JSON.stringify(newAccounts));
         accounts.current = newAccounts;
         fetchBalances([account]);
+      }
     }
 
     function loadAccounts(): AccountData[] {
+      if (typeof window !== "undefined") {
         const dataRaw = sessionStorage.getItem(accountDataKey);
         if (!dataRaw) {
-            return [];
+          return [];
         }
         const data: AccountData[] = JSON.parse(dataRaw);
         return data;
+      }
+      return []; // Ensure the function returns an empty array if window is undefined
     }
+    
 
     function clearState(): void {
         sessionStorage.clear();
@@ -385,9 +399,8 @@ type AccountData = {
 
     const { righteous } = useFonts();
 
-    const openIdProviders: OpenIdProvider[] = isLocalhost()
-        ? ['Google' ]
-        : ['Google']; // Facebook requires business verification to publish the app
+    
+  const openIdProviders: OpenIdProvider[] = ["Google"]; // Facebook requires business verification to publish the app
     return (
     <div id='page'>
 
