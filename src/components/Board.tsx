@@ -600,6 +600,21 @@ async function fetchBalances(accounts: AccountData[]) {
           id: index + 1, // Start id from 1
         }));
 
+        // IDs for which we want to keep question, options, answer
+        const idsToKeep = [3, 8, 10, 13, 19, 24, 27, 31, 33, 36, 37, 40, 43, 50, 54, 58, 65, 70];
+
+        // Iterate over the data using a for loop
+        for (let i = 0; i < updatedData.length; i++) {
+          if (!idsToKeep.includes(updatedData[i].id)) {
+            // Remove question, options, answer for IDs not in the list
+            delete updatedData[i].question;
+            delete updatedData[i].options;
+            delete updatedData[i].answer;
+          }
+        }
+
+        console.log("updatedData", updatedData);
+
         setIpfsGameData(updatedData);
         console.log("ipfs data", ipfsdata)
       } catch (err) {
