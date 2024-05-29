@@ -1,2 +1,3 @@
-# VirtueQuest
-An app where users are able to discover something new and receive an NFT to show off their achievement.
+# SNL
+YOUR ONCHAIN LEARNING ADVENTURE <br/>
+Experience Classic Fun and Earn Unique NFTs for Your Achievements
