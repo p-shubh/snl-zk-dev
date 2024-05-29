@@ -383,7 +383,7 @@ async function smartcontractposition(account: AccountData) {
 
           // Disable move and roll dice after encountering a quiz
           setIsMoveDisable(true);
-          setIsRollDisable(true);
+          setIsRollDisable(false);
         } else {
           // Cap playerPosition at 72
           const newPosition = Math.min(nextPosition, 72);
@@ -807,7 +807,7 @@ async function fetchBalances(accounts: AccountData[]) {
         </div>
       )}
 
-      {gameWon && <CongratulationsModal onClose={() => {router.push('/mint')}} snakesNumber={snakeCount} laddersNumber={ladderCount} />}
+      {gameWon && <CongratulationsModal onClose={() => {router.push('/explore')}} snakesNumber={snakeCount} laddersNumber={ladderCount} />}
     </>
   );
 };
