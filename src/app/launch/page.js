@@ -217,7 +217,7 @@ export default function Dashboard() {
 
         const postgamedata = { name: gamename, url: ipfsmetahashnft}
         const response = await fetch(
-          `http://18.220.86.101:6060/v1.0/snl/insert-address`,
+          `https://snl.lz9.in/v1.0/snl/insert-address`,
           {
             method: 'POST',
             headers: {
