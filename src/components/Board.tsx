@@ -301,12 +301,8 @@ async function smartcontractposition(account: AccountData) {
 
       const snakepoints = [10,1, 27,9, 24, 15,31,23, 43, 26, 40, 30, 58, 39, 70, 51, 65, 55];
 
-      // const ladderStartPoints = [7, 10, 30, 31, 36, 47, 54 ];
-      // const ladderEndPoints =   [14, 19, 50, 51, 42, 67, 62];
-      // const snakeStartPoints =  [21, 26, 28, 37, 41, 55, 68];
-      // const snakeEndPoints =    [13, 9,  20, 28, 25, 46, 48];
-
       const nextPosition = dieNumber + playerPosition;
+      console.log("position mismatch", dieNumber, playerPosition);
       let eventEncountered = '';
 
       // Check if the player is at the starting point of a ladder or a snake
@@ -316,9 +312,14 @@ async function smartcontractposition(account: AccountData) {
       if (isLadderStart) {
         setTypePost('ladder');
         setLadderCount((prevCount) => prevCount + 1);
+        console.log("ladder match", nextPosition, isLadderStart)
       } else if (isSnakeStart) {
         setTypePost('snake');
         setSnakeCount((prevCount) => prevCount + 1);
+        console.log("snake match", nextPosition, isSnakeStart)
+      }else
+      {
+        setTypePost('');
       }
 
       // Get questionModalContent from GameData
@@ -352,14 +353,17 @@ async function smartcontractposition(account: AccountData) {
             : snakeEndPoints[eventIndex],
           72
         );
-        // setPlayerPosition(newPosition);
+        setPlayerPosition(newPosition);
 
         // Enable rolling dice after encountering a ladder or snake
         setIsMoveDisable(true);
         setIsRollDisable(false);
 
         // Show QuestionModal for ladder or snake
-        setQuestionModalVisible(true);
+        if(isLadderStart || isSnakeStart)
+         {
+          setQuestionModalVisible(true);
+         }
       } else {
         // Check if the player landed on a cell with quiz information
         const currentCell = ipfsGameData.find(
@@ -388,7 +392,7 @@ async function smartcontractposition(account: AccountData) {
           // Cap playerPosition at 72
           const newPosition = Math.min(nextPosition, 72);
           // Move the player to the next position
-          // setPlayerPosition(newPosition);
+          setPlayerPosition(newPosition);
 
           // Enable rolling dice after a move
           setIsMoveDisable(true);
@@ -701,7 +705,7 @@ async function fetchBalances(accounts: AccountData[]) {
                   const rollResult = await getRandomNumber();
                   console.log("roll result", rollResult);
                   setDieNumber(rollResult.dice_value);
-                  setPlayerPosition(rollResult.player_position);
+                  // setPlayerPosition(rollResult.player_position);
                   setIsMoveDisable(false);
                   setIsRollDisable(true);
                 }}
