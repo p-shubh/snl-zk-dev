@@ -31,7 +31,7 @@ func HealthCheck(c *gin.Context) {
 	})
 }
 func HandleRequest() {
-	if os.Getenv("APP_MODE_DEBUG") == "" {
+	if os.Getenv("APP_MODE_DEBU") == "" {
 		gin.SetMode(gin.ReleaseMode)
 	} else {
 		gin.SetMode(gin.DebugMode)
@@ -46,6 +46,7 @@ func HandleRequest() {
 	ginApp.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{"status": 404, "message": "Invalid Endpoint Request"})
 	})
+
 	ApplyRoutes(&ginApp.RouterGroup)
 
 	ginApp.Run(":6060")
