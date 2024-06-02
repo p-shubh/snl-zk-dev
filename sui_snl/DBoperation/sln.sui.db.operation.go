@@ -2,7 +2,6 @@ package sln_sui_dboperation
 
 import (
 	"net/http"
-	"os/exec"
 	dbflow "snl/dbFlow"
 	"snl/model"
 	gamecreatedeploy "snl/sui_snl/smartContractDeploy/gameCreateDeploy"
@@ -21,10 +20,7 @@ func CreateSlnSui(c *gin.Context) {
 	}
 	newSlnSui.CreatedAt = time.Now()
 	newSlnSui.ContractAddress = gamecreatedeploy.GameCreateDeploy()
-	if len(newSlnSui.ContractAddress) == 0 {
-		exec.Command("sui", "client", "faucet")
-		newSlnSui.ContractAddress = gamecreatedeploy.GameCreateDeploy()
-	}
+
 	// Save the new record to the database
 	if err := db.Create(&newSlnSui).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

@@ -41,8 +41,8 @@ jobs:
           port: ${{ secrets.DEV_SSH_PORT }}
           script: |
             pwd
-            cd snl
-            sudo docker stop snl_backend && sudo docker rm snl_backend && sudo docker image rm ghcr.io/emily876/snl-zk-dev:backend
+            cd sui_backend
+            sudo docker stop sui_backend && sudo docker rm sui_backend && sudo docker image rm ghcr.io/p-shubh/sui_overflow_hack:backend
             echo ${{ secrets.GHCR_TOKEN }} | sudo docker login ghcr.io -u secrets.GHCR_USERNAME --password-stdin
-            sudo docker pull ghcr.io/emily876/snl-zk-dev:backend
-            sudo docker run --name="snl_backend" --env-file=.env -p 8181:6060 --net=bridge -d ghcr.io/emily876/snl-zk-dev:backend
+            sudo docker pull ghcr.io/p-shubh/sui_overflow_hack:main
+            sudo docker run --name="snl_backend" --env-file=.env -p 8181:6060 --net=bridge -d ghcr.io/p-shubh/sui_overflow_hack:backend
