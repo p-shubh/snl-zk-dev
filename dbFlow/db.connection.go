@@ -11,6 +11,6 @@ func DbTest() {
 	if db.Error != nil {
 		log.Println("[ ERROR ] DbTest :Failed to connect db : ", db.Error.Error())
 	}
-	db.AutoMigrate(&model.SlnSui{})
+	db.AutoMigrate(&model.SlnSui{}, &model.ChainLink{})
 
 }

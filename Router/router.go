@@ -2,7 +2,6 @@ package router
 
 import (
 	"net/http"
-	"os"
 	suiSlnRouter "snl/sui_snl/ApiRouting"
 
 	"github.com/gin-contrib/static"
@@ -26,16 +25,19 @@ func CORS(c *gin.Context) {
 	}
 }
 func HealthCheck(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
+	c.JSON(http.StatusOK, gin.H{	
 		"status": 200, "message": "Server is UP and running",
 	})
 }
 func HandleRequest() {
-	if os.Getenv("APP_MODE_DEBU") == "" {
-		gin.SetMode(gin.ReleaseMode)
-	} else {
-		gin.SetMode(gin.DebugMode)
-	}
+	// if os.Getenv("APP_MODE_DEBUG") == "" {
+	// 	fmt.Println("APP_MODE_DEBUG : ", os.Getenv("APP_MODE_DEBUG"))
+	// 	gin.SetMode(gin.ReleaseMode)
+	// } else {
+	// 	gin.SetMode(gin.DebugMode)
+	// }
+	gin.SetMode(gin.DebugMode)
+
 	ginApp.Use(CORSMiddleware())
 
 	ginApp.Use(static.Serve("/", static.LocalFile("./web", false)))
@@ -46,7 +48,6 @@ func HandleRequest() {
 	ginApp.NoRoute(func(c *gin.Context) {
 		c.JSON(404, gin.H{"status": 404, "message": "Invalid Endpoint Request"})
 	})
-
 	ApplyRoutes(&ginApp.RouterGroup)
 
 	ginApp.Run(":6060")

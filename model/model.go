@@ -10,3 +10,9 @@ type SlnSui struct {
 	Name            string    `gorm:"column:name" json:"name"`
 	Url             string    `gorm:"column:url" json:"url"`
 }
+type ChainLink struct {
+	ID              int       `gorm:"primaryKey;serial"`
+	WalletAddress   string    `gorm:"column:walletaddress" json:"walletAddress"`
+	ContractAddress string    `gorm:"column:contract_address"`
+	CreatedAt       time.Time `gorm:"column:created_at;default:now()"`
+}
